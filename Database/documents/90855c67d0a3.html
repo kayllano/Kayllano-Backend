@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SenaDeploy - Upload static projects and instantly share them with a clean URL structure">
+    <meta name="keywords" content="deploy, static website, hosting, project deployer">
+    <meta name="author" content="Arsena Luciendra">
+    <meta property="og:title" content="SenaDeploy - Deploy Static Projects In Seconds">
+    <meta property="og:description" content="Upload your website and instantly share it.">
+    <meta property="og:type" content="website">
+    <title>SenaDeploy - Deploy Static Projects In Seconds</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-black: #000000;
+            --primary-white: #ffffff;
+            --primary-blue: #0066ff;
+            --secondary-blue: #003d99;
+            --light-gray: #f5f5f5;
+            --border-width: 3px;
+            --shadow-size: 8px;
+            --border-radius: 16px;
+            --transition: 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background-color: var(--primary-white);
+            color: var(--primary-black);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 2px;
+        }
+
+        /* NAVBAR */
+        nav {
+            background-color: var(--primary-white);
+            border-bottom: var(--border-width) solid var(--primary-black);
+            box-shadow: var(--shadow-size) var(--shadow-size) 0 var(--primary-black);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 28px;
+            font-weight: bold;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 3px;
+            color: var(--primary-black);
+        }
+
+        .navbar-menu {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .navbar-menu a {
+            text-decoration: none;
+            color: var(--primary-black);
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .navbar-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-blue);
+            transition: var(--transition);
+        }
+
+        .navbar-menu a:hover::after {
+            width: 100%;
+        }
+
+        .navbar-btn {
+            background-color: var(--primary-black);
+            color: var(--primary-white);
+            border: var(--border-width) solid var(--primary-black);
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border-radius: var(--border-radius);
+            box-shadow: 4px 4px 0 var(--primary-black);
+            transition: var(--transition);
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 1px;
+        }
+
+        .navbar-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--primary-black);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background-color: var(--primary-black);
+            border-radius: 2px;
+            transition: var(--transition);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 64px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            letter-spacing: 2px;
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: var(--primary-black);
+            margin-bottom: 15px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .hero-description {
+            font-size: 16px;
+            color: var(--primary-black);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .hero-preview-url {
+            background-color: var(--light-gray);
+            border: var(--border-width) solid var(--primary-black);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 40px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 6px 6px 0 var(--primary-black);
+            word-break: break-all;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 60px;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            border: var(--border-width) solid var(--primary-black);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 1px;
+            box-shadow: 6px 6px 0 var(--primary-black);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-black);
+            color: var(--primary-white);
+        }
+
+        .btn-primary:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0 var(--primary-black);
+        }
+
+        .btn-secondary {
+            background-color: var(--primary-white);
+            color: var(--primary-black);
+        }
+
+        .btn-secondary:hover {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0 var(--primary-black);
+        }
+
+        .hero-mockup {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .mockup-card {
+            background-color: var(--light-gray);
+            border: var(--border-width) solid var(--primary-black);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 8px 8px 0 var(--primary-black);
+            width: 280px;
+            text-align: left;
+            transition: var(--transition);
+        }
+
+        .mockup-card:hover {
+            transform: translate(-5px, -5px);
+            box-shadow: 13px 13px 0 var(--primary-black);
+        }
+
+        .mockup-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mockup-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .mockup-content {
+            font-size: 13px;
+            line-height: 2;
+            color: var(--primary-black);
+        }
+
+        /* HOW IT WORKS */
+        .how-it-works {
+            background-color: var(--light-gray);
+            padding: 80px 20px;
+            border-top: var(--border-width) solid var(--primary-black);
+            border-bottom: var(--border-width) solid var(--primary-black);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 60px;
+            letter-spacing: 2px;
+        }
+
+        .steps-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .step-card {
+            background-color: var(--primary-white);
+            border: var(--border-width) solid var(--primary-black);
+            padding: 40px 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 8px 8px 0 var(--primary-black);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .step-card:hover {
+            transform: translate(0, -8px);
+            box-shadow: 8px 16px 0 var(--primary-black);
+        }
+
+        .step-number {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* DEPLOY SECTION */
+        .deploy-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        .deploy-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .deploy-form {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-label {
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .form-input {
+            border: var(--border-width) solid var(--primary-black);
+            padding: 14px 16px;
+            border-radius: var(--border-radius);
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            background-color: var(--primary-white);
+            box-shadow: 4px 4px 0 var(--primary-black);
+            transition: var(--transition);
+        }
+
+        .form-input:focus {
+            outline: none;
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 var(--primary-black);
+        }
+
+        .drag-drop-area {
+            border: 3px dashed var(--primary-black);
+            padding: 50px 30px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--light-gray);
+            box-shadow: 6px 6px 0 var(--primary-black);
+        }
+
+        .drag-drop-area:hover {
+            background-color: var(--primary-white);
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0 var(--primary-black);
+        }
+
+        .drag-drop-area.dragover {
+            background-color: var(--primary-blue);
+            color: var(--primary-white);
+            border-color: var(--primary-white);
+        }
+
+        .drag-drop-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .drag-drop-text {
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .deploy-preview {
+            background-color: var(--light-gray);
+            border: var(--border-width) solid var(--primary-black);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: 8px 8px 0 var(--primary-black);
+        }
+
+        .preview-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .preview-url {
+            background-color: var(--primary-white);
+            border: var(--border-width) solid var(--primary-black);
+            padding: 16px;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            font-weight: 700;
+            word-break: break-all;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .copy-btn {
+            background-color: var(--primary-blue);
+            color: var(--primary-white);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: var(--transition);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--secondary-blue);
+        }
+
+        .deploy-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            background-color: var(--primary-black);
+            color: var(--primary-white);
+            border: var(--border-width) solid var(--primary-black);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            box-shadow: 6px 6px 0 var(--primary-black);
+            transition: var(--transition);
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .deploy-btn:hover:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0 var(--primary-black);
+        }
+
+        .deploy-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* RULES SECTION */
+        .rules-section {
+            background-color: var(--light-gray);
+            padding: 80px 20px;
+            border-top: var(--border-width) solid var(--primary-black);
+            border-bottom: var(--border-width) solid var(--primary-black);
+        }
+
+        .rules-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .rule-item {
+            background-color: var(--primary-white);
+            border: var(--border-width) solid var(--primary-black);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 4px 4px 0 var(--primary-black);
+        }
+
+        .rule-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rule-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .rule-content {
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .rule-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .rule-list li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .rule-list li::before {
+            content: '▪';
+            position: absolute;
+            left: 0;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+
+        /* DASHBOARD SECTION */
+        .dashboard-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background-color: var(--light-gray);
+            border: var(--border-width) solid var(--primary-black);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 8px 8px 0 var(--primary-black);
+            transition: var(--transition);
+        }
+
+        .project-card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 11px 11px 0 var(--primary-black);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .project-name {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: 2px solid var(--primary-black);
+        }
+
+        .badge-active {
+            background-color: #00cc00;
+            color: var(--primary-black);
+        }
+
+        .badge-cooldown {
+            background-color: #ffaa00;
+            color: var(--primary-black);
+        }
+
+        .badge-deleted {
+            background-color: #ff3333;
+            color: var(--primary-white);
+        }
+
+        .project-url {
+            background-color: var(--primary-white);
+            border: 2px solid var(--primary-black);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            word-break: break-all;
+            font-weight: 700;
+        }
+
+        .project-date {
+            font-size: 12px;
+            color: var(--primary-black);
+            margin-bottom: 20px;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 2px solid var(--primary-black);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: 'Space Mono', monospace;
+            background-color: var(--primary-white);
+        }
+
+        .action-btn:hover {
+            transform: translate(1px, 1px);
+        }
+
+        .action-btn.delete {
+            background-color: #ff3333;
+            color: var(--primary-white);
+            border-color: #ff3333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background-color: var(--light-gray);
+            border: var(--border-width) dashed var(--primary-black);
+            border-radius: var(--border-radius);
+            box-shadow: 8px 8px 0 var(--primary-black);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-text {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        /* FAQ SECTION */
+        .faq-section {
+            background-color: var(--light-gray);
+            padding: 80px 20px;
+            border-top: var(--border-width) solid var(--primary-black);
+            border-bottom: var(--border-width) solid var(--primary-black);
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .accordion {
+            background-color: var(--primary-white);
+            border: var(--border-width) solid var(--primary-black);
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 6px 6px 0 var(--primary-black);
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 20px;
+            background-color: var(--primary-white);
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 1px;
+        }
+
+        .accordion-header:hover {
+            background-color: var(--light-gray);
+        }
+
+        .accordion-icon {
+            font-size: 20px;
+            transition: var(--transition);
+        }
+
+        .accordion.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 20px;
+        }
+
+        .accordion.active .accordion-content {
+            max-height: 500px;
+            padding: 0 20px 20px 20px;
+        }
+
+        .accordion-text {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--primary-black);
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--primary-black);
+            color: var(--primary-white);
+            padding: 60px 20px 30px;
+            border-top: var(--border-width) solid var(--primary-black);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h4 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column ul li a {
+            color: var(--primary-white);
+            text-decoration: none;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--primary-blue);
+        }
+
+        .footer-bottom {
+            border-top: var(--border-width) solid var(--primary-white);
+            padding-top: 30px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: var(--primary-black);
+            color: var(--primary-white);
+            padding: 16px 24px;
+            border-radius: var(--border-radius);
+            border: var(--border-width) solid var(--primary-white);
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.3);
+            z-index: 2000;
+            animation: slideIn 0.3s ease-out;
+            font-weight: 700;
+            max-width: 300px;
+            word-wrap: break-word;
+        }
+
+        .toast.success {
+            background-color: #00cc00;
+            color: var(--primary-black);
+            border-color: var(--primary-black);
+        }
+
+        .toast.error {
+            background-color: #ff3333;
+            color: var(--primary-white);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .navbar-menu {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background-color: var(--primary-white);
+                border-bottom: var(--border-width) solid var(--primary-black);
+                padding: 20px;
+                gap: 15px;
+                box-shadow: 0 var(--shadow-size) 0 var(--primary-black);
+                z-index: 999;
+            }
+
+            .navbar-menu.active {
+                display: flex;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero-title {
+                font-size: 40px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .deploy-container {
+                grid-template-columns: 1fr;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .toast {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+            }
+
+            .navbar-btn {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-brand {
+                font-size: 20px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .hero-description {
+                font-size: 14px;
+            }
+
+            .btn {
+                padding: 14px 24px;
+                font-size: 14px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .mockup-card {
+                width: 100%;
+            }
+
+            .hero-mockup {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav>
+        <div class="navbar-container">
+            <div class="navbar-brand">SenaDeploy</div>
+            <ul class="navbar-menu" id="navbarMenu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#rules">Rules</a></li>
+                <li><a href="#deploy">Deploy</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+            <button class="navbar-btn" onclick="scrollToSection('deploy')">Dashboard</button>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <h1 class="hero-title">Deploy Static Projects In Seconds</h1>
+        <h2 class="hero-subtitle">Upload your website and instantly share it.</h2>
+        <p class="hero-description">
+            SenaDeploy lets you upload static projects and publish them using a clean URL structure.
+        </p>
+        <div class="hero-preview-url">
+            deploy.senaku.biz.id/u/your-project
+        </div>
+        <div class="hero-buttons">
+            <button class="btn btn-primary" onclick="scrollToSection('deploy')">Deploy Project</button>
+            <button class="btn btn-secondary" onclick="scrollToSection('rules')">View Rules</button>
+        </div>
+        <div class="hero-mockup">
+            <div class="mockup-card">
+                <div class="mockup-title">
+                    <span class="mockup-icon"><i class="fas fa-box"></i></span>
+                    Upload Project
+                </div>
+                <div class="mockup-content">
+                    portfolio.zip<br>
+                    Deploying...<br>
+                    URL Generated
+                </div>
+            </div>
+            <div class="mockup-card">
+                <div class="mockup-title">
+                    <span class="mockup-icon"><i class="fas fa-check"></i></span>
+                    Ready to Deploy
+                </div>
+                <div class="mockup-content">
+                    Your project is ready<br>
+                    Click deploy button<br>
+                    Share your link
+                </div>
+            </div>
+            <div class="mockup-card">
+                <div class="mockup-title">
+                    <span class="mockup-icon"><i class="fas fa-link"></i></span>
+                    Share Instantly
+                </div>
+                <div class="mockup-content">
+                    deploy.senaku.biz.id/u/portfolio<br>
+                    Copy & share<br>
+                    Live now!
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works" id="how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-title">Upload Project</div>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-title">Choose Project Name</div>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-title">Deploy Project</div>
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <div class="step-title">Share URL</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEPLOY SECTION -->
+    <section class="deploy-section" id="deploy">
+        <h2 class="section-title">Deploy Your Project</h2>
+        <div class="deploy-container">
+            <div class="deploy-form">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-input" id="username" placeholder="your-username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Project Name</label>
+                    <input type="text" class="form-input" id="projectName" placeholder="my-project" oninput="generateSlug()">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Project Description</label>
+                    <input type="text" class="form-input" id="projectDesc" placeholder="Brief description of your project">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Upload ZIP / HTML</label>
+                    <div class="drag-drop-area" id="dragDropArea">
+                        <div class="drag-drop-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+                        <div class="drag-drop-text">Drag & drop your files here<br>or click to select</div>
+                    </div>
+                    <input type="file" id="fileInput" style="display: none;">
+                </div>
+                <button class="deploy-btn" id="deployBtn" onclick="deployProject()">Deploy Now</button>
+            </div>
+
+            <div class="deploy-preview">
+                <div class="preview-label">Preview URL</div>
+                <div class="preview-url" id="previewUrl">
+                    <span id="previewUrlText">deploy.senaku.biz.id/u/project-name</span>
+                    <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+                </div>
+                <div style="background-color: var(--primary-white); border: var(--border-width) solid var(--primary-black); padding: 20px; border-radius: var(--border-radius); text-align: center;">
+                    <div style="font-size: 12px; font-weight: 700; margin-bottom: 15px; letter-spacing: 1px;">PROJECT INFO</div>
+                    <div style="font-size: 14px; margin-bottom: 10px;"><strong>Username:</strong> <span id="displayUsername">-</span></div>
+                    <div style="font-size: 14px; margin-bottom: 10px;"><strong>Project:</strong> <span id="displayProject">-</span></div>
+                    <div style="font-size: 14px; margin-bottom: 10px;"><strong>Description:</strong> <span id="displayDesc">-</span></div>
+                    <div style="font-size: 14px;"><strong>File:</strong> <span id="displayFile">-</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RULES SECTION -->
+    <section class="rules-section" id="rules">
+        <h2 class="section-title">Rules & Limitations</h2>
+        <div class="rules-container">
+            <div class="rule-item">
+                <div class="rule-title">
+                    <span class="rule-icon"><i class="fas fa-list"></i></span>
+                    User Limitations
+                </div>
+                <div class="rule-content">
+                    <ul class="rule-list">
+                        <li>1 user hanya boleh memiliki 1 active project</li>
+                        <li>Deploy hanya 1x per minggu</li>
+                        <li>Project dapat dihapus lalu deploy ulang</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-title">
+                    <span class="rule-icon"><i class="fas fa-folder"></i></span>
+                    Supported File Types
+                </div>
+                <div class="rule-content">
+                    <ul class="rule-list">
+                        <li>HTML</li>
+                        <li>CSS</li>
+                        <li>JavaScript</li>
+                        <li>JSON</li>
+                        <li>Images (PNG, JPG, GIF, SVG)</li>
+                        <li>Fonts (WOFF, WOFF2, TTF)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="rule-item">
+                <div class="rule-title">
+                    <span class="rule-icon"><i class="fas fa-triangle-exclamation"></i></span>
+                    Upload Restrictions
+                </div>
+                <div class="rule-content">
+                    <ul class="rule-list">
+                        <li>Hanya menerima static website</li>
+                        <li>Maximum upload: 10MB</li>
+                        <li>Tidak boleh ada backend/server code</li>
+                        <li>Tidak boleh ada executable files</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD SECTION -->
+    <section class="dashboard-section" id="dashboard">
+        <h2 class="section-title">Your Projects</h2>
+        <div class="dashboard-container" id="dashboardContainer">
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="fas fa-inbox"></i></div>
+                <div class="empty-state-text">No Projects Yet</div>
+                <p>Deploy your first project to see it here</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section" id="faq">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="accordion" onclick="toggleAccordion(this)">
+                <button class="accordion-header">
+                    What can I deploy?
+                    <span class="accordion-icon">▼</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-text">
+                        You can deploy static websites including HTML, CSS, JavaScript, images, and fonts. SenaDeploy is designed for static projects only - no backend servers or dynamic content.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion" onclick="toggleAccordion(this)">
+                <button class="accordion-header">
+                    Can I deploy backend projects?
+                    <span class="accordion-icon">▼</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-text">
+                        No, SenaDeploy only supports static websites. Backend projects, databases, or server-side code are not supported. This ensures fast deployment and reliable hosting.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion" onclick="toggleAccordion(this)">
+                <button class="accordion-header">
+                    How many projects can I deploy?
+                    <span class="accordion-icon">▼</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-text">
+                        You can have 1 active project per username at a time. However, you can delete your current project and deploy a new one. There's a deploy limit of 1 deployment per week per user.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion" onclick="toggleAccordion(this)">
+                <button class="accordion-header">
+                    Can I deploy again after deleting?
+                    <span class="accordion-icon">▼</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-text">
+                        Yes! You can delete your current project and deploy a new one. Just remember the weekly deployment limit - you can only deploy once per week.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion" onclick="toggleAccordion(this)">
+                <button class="accordion-header">
+                    Why deploy limit exists?
+                    <span class="accordion-icon">▼</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-text">
+                        The deployment limit helps us maintain service quality and prevent abuse. It ensures fair resource allocation for all users while keeping the platform stable and responsive.
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion" onclick="toggleAccordion(this)">
+                <button class="accordion-header">
+                    What file format is supported?
+                    <span class="accordion-icon">▼</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="accordion-text">
+                        Supported formats: HTML, CSS, JavaScript, JSON, PNG, JPG, GIF, SVG, WOFF, WOFF2, and TTF fonts. Maximum file size is 10MB. You can upload individual files or a ZIP archive containing your project.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#deploy">Deploy</a></li>
+                        <li><a href="#rules">Rules</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Developer</h4>
+                    <ul>
+                        <li><a href="https://github.com/senaczk" target="_blank">GitHub</a></li>
+                        <li><a href="javascript:void(0)">API Reference</a></li>
+                        <li><a href="javascript:void(0)">Documentation</a></li>
+                        <li><a href="javascript:void(0)">Status</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://about-sena.web.id" target="_blank">Portfolio</a></li>
+                        <li><a href="javascript:void(0)">Tutorials</a></li>
+                        <li><a href="javascript:void(0)">Community</a></li>
+                        <li><a href="javascript:void(0)">Blog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><a href="https://t.me/senaczk" target="_blank">Telegram</a></li>
+                        <li><a href="javascript:void(0)">Email</a></li>
+                        <li><a href="javascript:void(0)">Twitter</a></li>
+                        <li><a href="javascript:void(0)">Feedback</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                © 2026 Arsena Luciendra. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ALLOWED FILE EXTENSIONS
+        const ALLOWED_EXTENSIONS = ['.zip', '.html', '.css', '.js', '.json', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.woff', '.woff2', '.ttf'];
+        const BLOCKED_EXTENSIONS = ['.php', '.py', '.sh', '.exe', '.env', '.bat', '.cmd', '.jar'];
+
+        // HAMBURGER MENU
+        const hamburger = document.getElementById('hamburger');
+        const navbarMenu = document.getElementById('navbarMenu');
+
+        hamburger.addEventListener('click', () => {
+            navbarMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.navbar-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                navbarMenu.classList.remove('active');
+            });
+        });
+
+        // SCROLL TO SECTION
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                navbarMenu.classList.remove('active');
+            }
+        }
+
+        // DRAG AND DROP
+        const dragDropArea = document.getElementById('dragDropArea');
+        const fileInput = document.getElementById('fileInput');
+
+        dragDropArea.addEventListener('click', () => fileInput.click());
+
+        dragDropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dragDropArea.classList.add('dragover');
+        });
+
+        dragDropArea.addEventListener('dragleave', () => {
+            dragDropArea.classList.remove('dragover');
+        });
+
+        dragDropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dragDropArea.classList.remove('dragover');
+            fileInput.files = e.dataTransfer.files;
+            validateAndUpdateFile();
+        });
+
+        fileInput.addEventListener('change', validateAndUpdateFile);
+
+        function validateAndUpdateFile() {
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileName = file.name;
+                const fileSize = (file.size / 1024 / 1024).toFixed(2);
+                
+                // Get file extension
+                const fileExtension = '.' + fileName.split('.').pop().toLowerCase();
+                
+                // Check if file is blocked
+                if (BLOCKED_EXTENSIONS.includes(fileExtension)) {
+                    showToast('File type not allowed: ' + fileExtension, 'error');
+                    fileInput.value = '';
+                    document.getElementById('displayFile').textContent = '-';
+                    return;
+                }
+                
+                // Check if file is allowed (if not .zip, must be in allowed list)
+                if (fileExtension !== '.zip' && !ALLOWED_EXTENSIONS.includes(fileExtension)) {
+                    showToast('File type not supported: ' + fileExtension, 'error');
+                    fileInput.value = '';
+                    document.getElementById('displayFile').textContent = '-';
+                    return;
+                }
+                
+                // Check file size
+                if (fileSize > 10) {
+                    showToast('File size exceeds 10MB limit', 'error');
+                    fileInput.value = '';
+                    document.getElementById('displayFile').textContent = '-';
+                    return;
+                }
+                
+                document.getElementById('displayFile').textContent = fileName + ' (' + fileSize + 'MB)';
+            }
+        }
+
+        // GENERATE SLUG
+        function generateSlug() {
+            const projectName = document.getElementById('projectName').value;
+            const slug = projectName
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+            
+            document.getElementById('displayProject').textContent = slug || '-';
+            document.getElementById('previewUrlText').textContent = slug 
+                ? `deploy.senaku.biz.id/u/${slug}` 
+                : 'deploy.senaku.biz.id/u/project-name';
+        }
+
+        // UPDATE DISPLAY
+        document.getElementById('username').addEventListener('input', (e) => {
+            document.getElementById('displayUsername').textContent = e.target.value || '-';
+        });
+
+        document.getElementById('projectDesc').addEventListener('input', (e) => {
+            document.getElementById('displayDesc').textContent = e.target.value || '-';
+        });
+
+        // COPY TO CLIPBOARD
+        function copyToClipboard() {
+            const url = document.getElementById('previewUrlText').textContent;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('URL copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy URL', 'error');
+            });
+        }
+
+        // DEPLOY PROJECT
+        function deployProject() {
+            const username = document.getElementById('username').value;
+            const projectName = document.getElementById('projectName').value;
+            const projectDesc = document.getElementById('projectDesc').value;
+            const file = fileInput.files[0];
+
+            if (!username || !projectName || !file) {
+                showToast('Please fill all fields and select a file', 'error');
+                return;
+            }
+
+            showToast('Backend not connected yet', 'error');
+        }
+
+        // ACCORDION
+        function toggleAccordion(element) {
+            element.classList.toggle('active');
+        }
+
+        // TOAST NOTIFICATION
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
