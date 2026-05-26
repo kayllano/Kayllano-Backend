@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenaPaste - Drop it Get a link.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f5f5;
+            --black: #111111;
+            --white: #ffffff;
+            --blue: #7da2ff;
+            --purple: #b79cff;
+            --yellow: #f0c55a;
+            --green: #8dc99b;
+            --red: #cf8181;
+            --gray: #909090;
+            --border-width: 3px;
+            --shadow-offset: 6px;
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--black);
+            font-family: 'Space Mono', monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .logo-text {
+            font-family: 'Bebas Neue', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1;
+        }
+
+        /* Utils */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .neo-card {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0 0 var(--black);
+            border-radius: var(--radius);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 28px;
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            box-shadow: 4px 4px 0 0 var(--black);
+            border-radius: var(--radius);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.25rem;
+            text-decoration: none;
+            color: var(--black);
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-transform: uppercase;
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 0 var(--black);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 1rem;
+            box-shadow: 2px 2px 0 0 var(--black);
+        }
+
+        .btn-sm:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 0 var(--black);
+        }
+
+        /* Navbar */
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--white);
+            border-bottom: var(--border-width) solid var(--black);
+            box-shadow: 0 4px 0 0 rgba(0,0,0,0.05);
+            z-index: 1000;
+            padding: 16px 0;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-square {
+            width: 44px;
+            height: 44px;
+            background: var(--black);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            color: var(--black);
+            text-decoration: none;
+        }
+
+        .status-badge {
+            background: var(--green);
+            border: 2px solid var(--black);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--black);
+            border-radius: 50%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 30px;
+            height: 3px;
+            background: var(--black);
+            border-radius: 2px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Hero */
+        .hero {
+            background-color: var(--blue);
+            border-bottom: var(--border-width) solid var(--black);
+            padding: 100px 0;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-tag {
+            font-weight: bold;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .hero-title {
+            font-size: 6rem;
+            line-height: 0.9;
+            margin-bottom: 24px;
+        }
+
+        .hero-desc {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            max-width: 500px;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+        }
+
+        .hero-preview {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            box-shadow: 10px 10px 0 0 var(--black);
+            border-radius: var(--radius);
+            padding: 24px;
+        }
+
+        .preview-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .preview-url {
+            background: #eee;
+            padding: 12px;
+            border: 2px solid var(--black);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            word-break: break-all;
+        }
+
+        /* Sections */
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 40px;
+        }
+
+        .paste-section {
+            background-color: var(--purple);
+            border-bottom: var(--border-width) solid var(--black);
+        }
+
+        .upload-section {
+            background-color: var(--blue);
+            border-bottom: var(--border-width) solid var(--black);
+        }
+
+        .raw-section {
+            background-color: var(--gray);
+            border-bottom: var(--border-width) solid var(--black);
+        }
+
+        .about-section {
+            background-color: var(--green);
+            border-bottom: var(--border-width) solid var(--black);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .input-field, .select-field, .textarea-field {
+            width: 100%;
+            padding: 16px;
+            border: var(--border-width) solid var(--black);
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            background: var(--white);
+            outline: none;
+        }
+
+        .textarea-field {
+            min-height: 300px;
+            resize: vertical;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 3px dashed var(--black);
+            border-radius: var(--radius);
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            background: rgba(255,255,255,0.5);
+            margin-bottom: 24px;
+        }
+
+        .upload-area.dragover {
+            background: var(--white);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .upload-text {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .file-info-card {
+            display: none;
+            background: var(--white);
+            border: 2px solid var(--black);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Code Preview */
+        .code-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--black);
+            position: relative;
+        }
+
+        .code-header {
+            background: #333;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--black);
+        }
+
+        .code-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .code-body {
+            padding: 20px;
+            overflow-x: auto;
+            display: flex;
+        }
+
+        .line-numbers {
+            color: #858585;
+            text-align: right;
+            padding-right: 20px;
+            user-select: none;
+            border-right: 1px solid #444;
+            margin-right: 20px;
+        }
+
+        .code-content {
+            white-space: pre;
+            flex-grow: 1;
+        }
+
+        .code-content.wrap {
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0;
+            background: var(--white);
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .footer-copy {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Toast */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--yellow);
+            border: var(--border-width) solid var(--black);
+            box-shadow: 6px 6px 0 0 var(--black);
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            font-weight: bold;
+            z-index: 2000;
+            transform: translateY(150%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #toast.show {
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .hero-title {
+                font-size: 4rem;
+            }
+            .hero-desc {
+                margin: 0 auto 40px;
+            }
+            .hero-btns {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                border-bottom: var(--border-width) solid var(--black);
+                padding: 20px;
+                flex-direction: column;
+            }
+            .nav-menu.active {
+                display: flex;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .hero-title {
+                font-size: 3rem;
+            }
+            .hero-btns {
+                flex-direction: column;
+            }
+            .neo-card {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="container nav-content">
+            <div class="nav-left">
+                <div class="logo-square">SP</div>
+                <a href="#" class="logo-text">SenaPaste</a>
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    v1.0 • online
+                </div>
+            </div>
+            <div class="nav-right">
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="nav-menu" id="nav-menu">
+                    <a href="https://github.com/senaczk" target="_blank" class="btn btn-sm">Github</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-info">
+                <span class="hero-tag">// SENAPASTE • TEXT + FILE SHARING</span>
+                <h1 class="hero-title">Paste it.<br>Upload it.<br>Share it.</h1>
+                <p class="hero-desc">Create text pastes and upload files instantly through a clean interface.</p>
+                <div class="hero-btns">
+                    <a href="#paste-section" class="btn">Create Paste</a>
+                    <a href="#upload-section" class="btn">Upload File</a>
+                </div>
+            </div>
+            <div class="hero-preview">
+                <span class="preview-label">Example URLs</span>
+                <div class="preview-url">paste.codesena.biz.id/raw/example</div>
+                <div class="preview-url">paste.codesena.biz.id/f/example</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paste Section -->
+    <section id="paste-section" class="paste-section section-padding">
+        <div class="container">
+            <h2 class="section-title">Paste Text</h2>
+            <div class="neo-card">
+                <div class="form-group">
+                    <label class="form-label">Paste Title</label>
+                    <input type="text" class="input-field" placeholder="My awesome code">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Language selector</label>
+                    <select class="select-field">
+                        <option>Plain Text</option>
+                        <option>HTML</option>
+                        <option>CSS</option>
+                        <option>JavaScript</option>
+                        <option>JSON</option>
+                        <option>Python</option>
+                        <option>PHP</option>
+                        <option>Markdown</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Large textarea</label>
+                    <textarea class="textarea-field" id="paste-area" placeholder="Write your code or text here..."></textarea>
+                </div>
+                <button class="btn" onclick="showBackendToast()">Create Paste</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload-section" class="upload-section section-padding">
+        <div class="container">
+            <h2 class="section-title">Upload File</h2>
+            <div class="neo-card">
+                <div class="upload-area" id="drop-zone">
+                    <span class="upload-icon"></span>
+                    <p class="upload-text">Choose file or drop it here</p>
+                    <p class="upload-subtext">Maximum size: 100MB</p>
+                    <input type="file" id="file-input" style="display: none;">
+                </div>
+
+                <div id="file-info" class="file-info-card">
+                    <div>
+                        <strong id="info-name">filename.txt</strong><br>
+                        <small id="info-details">Size: 1.2MB • Type: text/plain</small>
+                    </div>
+                    <button class="btn btn-sm" onclick="clearFile()">Remove</button>
+                </div>
+
+                <button class="btn" onclick="showBackendToast()">Upload File</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Raw Preview Section -->
+    <section class="raw-section section-padding">
+        <div class="container">
+            <h2 class="section-title">Raw Preview</h2>
+            <div class="neo-card">
+                <span class="preview-label" style="color: var(--black); font-weight: bold; margin-bottom: 20px; display: block;">Preview only</span>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <span style="font-size: 0.8rem;">example_script.js</span>
+                        <div class="code-actions">
+                            <button class="btn btn-sm" onclick="copyCode()" style="background: #444; color: white; border-color: #000;">Copy</button>
+                            <button class="btn btn-sm" onclick="toggleWrap()" style="background: #444; color: white; border-color: #000;">Wrap</button>
+                            <button class="btn btn-sm" onclick="showBackendToast()" style="background: #444; color: white; border-color: #000;">Download</button>
+                        </div>
+                    </div>
+                    <div class="code-body">
+                        <div class="line-numbers" id="line-numbers"></div>
+                        <div class="code-content" id="code-content">function helloWorld() {
+    console.log("Welcome to SenaPaste!");
+    const features = ["Paste Text", "Upload Files", "Share Instantly"];
+    
+    features.forEach(feature => {
+        console.log(`- ${feature}`);
+    });
+}
+
+// Neobrutalism is cool
+helloWorld();</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section section-padding">
+        <div class="container">
+            <h2 class="section-title">About</h2>
+            <div class="neo-card">
+                <p style="font-size: 1.25rem; margin-bottom: 30px;">SenaPaste allows users to create text pastes and upload files quickly through a clean and simple interface.</p>
+                <a href="https://github.com/senaczk" target="_blank" class="btn">Github</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <h2 class="footer-logo">SENAPASTE</h2>
+            <p class="footer-copy">© 2026 SenaPaste</p>
+            <p class="footer-copy">Created by Arsena Luciendra</p>
+        </div>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast">Backend not connected yet</div>
+
+    <script>
+        // Hamburger Menu
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        // Toast Notification
+        function showBackendToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Textarea Auto Resize
+        const textarea = document.getElementById('paste-area');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // Drag and Drop
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileInfo = document.getElementById('file-info');
+        const infoName = document.getElementById('info-name');
+        const infoDetails = document.getElementById('info-details');
+
+        const blockedExtensions = ['exe', 'php', 'sh', 'py', 'bat'];
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (blockedExtensions.includes(ext)) {
+                alert('File type .' + ext + ' is blocked for security reasons.');
+                return;
+            }
+
+            if (file.size > 95 * 1024 * 1024) {
+                alert('File is too large. Maximum size is 95MB.');
+                return;
+            }
+
+            infoName.textContent = file.name;
+            infoDetails.textContent = `Size: ${(file.size / 1024 / 1024).toFixed(2)}MB • Type: ${file.type || 'unknown'}`;
+            fileInfo.style.display = 'flex';
+        }
+
+        function clearFile() {
+            fileInput.value = '';
+            fileInfo.style.display = 'none';
+        }
+
+        // Code Preview Line Numbers
+        function updateLineNumbers() {
+            const content = document.getElementById('code-content').textContent;
+            const lines = content.split('\n').length;
+            const lineNumContainer = document.getElementById('line-numbers');
+            lineNumContainer.innerHTML = Array.from({length: lines}, (_, i) => i + 1).join('<br>');
+        }
+
+        function copyCode() {
+            const content = document.getElementById('code-content').textContent;
+            navigator.clipboard.writeText(content).then(() => {
+                const oldText = document.getElementById('toast').textContent;
+                document.getElementById('toast').textContent = "Copied to clipboard!";
+                showBackendToast();
+                setTimeout(() => {
+                    document.getElementById('toast').textContent = oldText;
+                }, 3000);
+            });
+        }
+
+        function toggleWrap() {
+            document.getElementById('code-content').classList.toggle('wrap');
+        }
+
+        // Initialize
+        updateLineNumbers();
+
+        // Smooth Scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
