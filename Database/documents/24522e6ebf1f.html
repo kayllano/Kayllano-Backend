@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenaCloud | Upload once. Share anywhere.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #e8e8e8;
+            --black: #121212;
+            --white: #ffffff;
+            --blue: #6c8eff;
+            --purple: #9d8cff;
+            --green: #7cb98f;
+            --orange: #dca458;
+            --gray: #777777;
+            --border-width: 3px;
+            --shadow-offset: 4px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--black);
+            font-family: 'Space Mono', monospace;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bebas Neue', cursive;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button, input, textarea, select {
+            font-family: 'Space Mono', monospace;
+            outline: none;
+        }
+
+        /* Utility */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .neo-card {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--black);
+            padding: 24px;
+            position: relative;
+        }
+
+        .neo-button {
+            background: var(--blue);
+            color: var(--black);
+            border: var(--border-width) solid var(--black);
+            box-shadow: 4px 4px 0px 0px var(--black);
+            padding: 12px 24px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s ease;
+        }
+
+        .neo-button:active {
+            box-shadow: 0px 0px 0px 0px var(--black);
+            transform: translate(4px, 4px);
+        }
+
+        .neo-button.secondary {
+            background: var(--white);
+        }
+
+        .neo-button.purple { background: var(--purple); }
+        .neo-button.green { background: var(--green); }
+        .neo-button.orange { background: var(--orange); }
+
+        .neo-input {
+            width: 100%;
+            padding: 12px;
+            border: var(--border-width) solid var(--black);
+            background: var(--white);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .neo-input:focus {
+            background: #f0f0f0;
+        }
+
+        /* Navbar */
+        nav {
+            border-bottom: var(--border-width) solid var(--black);
+            background: var(--white);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+        }
+
+        .logo-box {
+            background: var(--black);
+            color: var(--white);
+            padding: 2px 8px;
+            font-weight: 700;
+        }
+
+        .nav-right a {
+            font-weight: 700;
+            border: var(--border-width) solid var(--black);
+            padding: 5px 15px;
+            background: var(--white);
+            box-shadow: 3px 3px 0px 0px var(--black);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 80px 0 40px;
+            text-align: center;
+        }
+
+        .hero-tag {
+            color: var(--gray);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 5rem);
+            line-height: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            font-size: 18px;
+            color: var(--black);
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        /* Main Card */
+        .main-section {
+            padding: 40px 0;
+        }
+
+        .upload-card {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card-header {
+            margin-bottom: 24px;
+            border-bottom: var(--border-width) solid var(--black);
+            padding-bottom: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        textarea.neo-input {
+            height: 200px;
+            resize: vertical;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .drop-zone {
+            border: var(--border-width) dashed var(--black);
+            padding: 40px 20px;
+            text-align: center;
+            background: #fafafa;
+            cursor: pointer;
+            margin-bottom: 16px;
+            transition: background 0.2s;
+        }
+
+        .drop-zone.drag-over {
+            background: var(--blue);
+        }
+
+        .drop-zone p {
+            font-weight: 700;
+        }
+
+        .drop-zone span {
+            font-size: 12px;
+            color: var(--gray);
+            display: block;
+            margin-top: 8px;
+        }
+
+        .file-info {
+            background: var(--bg);
+            border: var(--border-width) solid var(--black);
+            padding: 12px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .file-info.active {
+            display: block;
+        }
+
+        .upload-btn {
+            width: 100%;
+            font-size: 18px;
+            padding: 16px;
+        }
+
+        /* Result Card */
+        .result-card {
+            margin-top: 40px;
+            display: none;
+            background: var(--green);
+        }
+
+        .result-card.active {
+            display: block;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .result-url {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            padding: 12px;
+            word-break: break-all;
+            margin: 16px 0;
+            font-weight: 700;
+        }
+
+        .result-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* API Section */
+        .api-section {
+            padding: 60px 0;
+        }
+
+        .api-card {
+            background: #222;
+            color: #eee;
+        }
+
+        .api-card h2 {
+            color: var(--white);
+            margin-bottom: 20px;
+        }
+
+        .code-block {
+            background: var(--black);
+            padding: 15px;
+            border: 2px solid #444;
+            margin-bottom: 12px;
+            font-size: 13px;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .api-btns {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+
+        .api-btns .neo-button {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .about-text {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        footer {
+            border-top: var(--border-width) solid var(--black);
+            background: var(--white);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .copyright {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Toast */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: var(--orange);
+            border: var(--border-width) solid var(--black);
+            box-shadow: 4px 4px 0px 0px var(--black);
+            padding: 12px 24px;
+            margin-top: 10px;
+            font-weight: 700;
+            animation: fadeInRight 0.3s ease-out;
+        }
+
+        @keyframes fadeInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .hero-btns {
+                flex-direction: column;
+            }
+            .result-btns {
+                grid-template-columns: 1fr;
+            }
+            .api-btns {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">
+                <span class="logo-box">SC</span>
+                <span style="font-family: 'Bebas Neue';">SENACLOUD</span>
+            </a>
+            <div class="nav-right">
+                <a href="https://github.com/senaczk" target="_blank">GITHUB</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container">
+            <span class="hero-tag">// ALL IN ONE CLOUD</span>
+            <h1>Upload once.<br>Share anywhere.</h1>
+            <p>Share files, code, text, images, videos and documents with one simple link.</p>
+            <div class="hero-btns">
+                <button class="neo-button" onclick="document.getElementById('upload-area').scrollIntoView({behavior: 'smooth'})">Start Upload</button>
+                <button class="neo-button secondary" onclick="document.getElementById('api-area').scrollIntoView({behavior: 'smooth'})">View API</button>
+            </div>
+        </div>
+    </header>
+
+    <section class="main-section" id="upload-area">
+        <div class="container">
+            <div class="upload-card neo-card">
+                <div class="card-header">
+                    <h2>Create Link</h2>
+                </div>
+                
+                <div class="form-body">
+                    <div class="form-row">
+                        <input type="text" id="title-input" class="neo-input" placeholder="Title (optional)">
+                        <select id="lang-select" class="neo-input">
+                            <option value="plaintext">Plain Text</option>
+                            <option value="html">HTML</option>
+                            <option value="css">CSS</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="json">JSON</option>
+                            <option value="python">Python</option>
+                            <option value="php">PHP</option>
+                            <option value="markdown">Markdown</option>
+                        </select>
+                    </div>
+
+                    <textarea id="text-input" class="neo-input" placeholder="Write text or code here..."></textarea>
+
+                    <div class="drop-zone" id="drop-zone">
+                        <p>Drop file here or choose from device</p>
+                        <span>Allowed: jpg, png, gif, mp4, mp3, pdf, txt, zip, etc. (Max 95MB)</span>
+                        <input type="file" id="file-input" style="display: none;">
+                    </div>
+
+                    <div id="file-preview" class="file-info">
+                        <strong>Selected File:</strong>
+                        <div id="file-details" style="font-size: 13px; margin-top: 5px;"></div>
+                    </div>
+
+                    <button id="main-upload-btn" class="neo-button upload-btn">UPLOAD / CREATE LINK</button>
+                </div>
+            </div>
+
+            <div id="result-card" class="upload-card neo-card result-card">
+                <div class="card-header">
+                    <h2 id="result-title">Generated URL</h2>
+                </div>
+                <div class="result-url" id="result-url-text"></div>
+                <div class="result-btns" id="result-btns-container">
+                    <!-- Dynamic buttons based on type -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="api-section" id="api-area">
+        <div class="container">
+            <div class="api-card neo-card">
+                <h2>Quick API</h2>
+                
+                <p style="margin-bottom: 10px; font-weight: 700;">Upload file:</p>
+                <div class="code-block" id="curl-upload">
+                    curl -X POST -F "file=@image.jpg" https://cloud.sena.biz.id/api/upload
+                </div>
+                <div class="api-btns">
+                    <button class="neo-button secondary" onclick="copyToClipboard('curl-upload', 'Upload cURL copied!')">Copy Upload cURL</button>
+                </div>
+
+                <p style="margin-bottom: 10px; font-weight: 700;">Create paste:</p>
+                <div class="code-block" id="curl-paste">
+                    curl -X POST https://cloud.sena.biz.id/api/paste \
+-H "Content-Type: application/json" \
+-d '{"title":"hello.js","language":"javascript","content":"console.log(\"hello\")"}'
+                </div>
+                <div class="api-btns">
+                    <button class="neo-button secondary" onclick="copyToClipboard('curl-paste', 'Paste cURL copied!')">Copy Paste cURL</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="container">
+            <div class="about-text">
+                SenaCloud combines file hosting and raw text sharing into one simple cloud platform.
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <h2 style="font-size: 40px;">SENACLOUD</h2>
+            </div>
+            <p class="copyright">© 2026 Arsena Luciendra</p>
+            <p class="copyright">Created by Arsena Luciendra</p>
+        </div>
+    </footer>
+
+    <div id="toast-container"></div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const textInput = document.getElementById('text-input');
+        const titleInput = document.getElementById('title-input');
+        const langSelect = document.getElementById('lang-select');
+        const filePreview = document.getElementById('file-preview');
+        const fileDetails = document.getElementById('file-details');
+        const uploadBtn = document.getElementById('main-upload-btn');
+        const resultCard = document.getElementById('result-card');
+        const resultUrlText = document.getElementById('result-url-text');
+        const resultBtnsContainer = document.getElementById('result-btns-container');
+        const resultTitle = document.getElementById('result-title');
+
+        const BLOCKED_EXT = ['exe', 'php', 'py', 'sh', 'env', 'bat', 'cmd', 'jar'];
+        const MAX_SIZE = 95 * 1024 * 1024; // 95MB
+
+        let selectedFile = null;
+
+        // UI Interactions
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length > 0) {
+                handleFileSelect(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (BLOCKED_EXT.includes(ext)) {
+                showToast('File type blocked for security.', 'orange');
+                return;
+            }
+            if (file.size > MAX_SIZE) {
+                showToast('File too large. Max 95MB.', 'orange');
+                return;
+            }
+
+            selectedFile = file;
+            filePreview.classList.add('active');
+            fileDetails.innerHTML = `
+                Name: ${file.name}<br>
+                Size: ${(file.size / 1024 / 1024).toFixed(2)} MB<br>
+                Type: ${file.type || 'unknown'}
+            `;
+        }
+
+        // Upload Logic
+        uploadBtn.addEventListener('click', async () => {
+            const textContent = textInput.value.trim();
+            
+            if (selectedFile && textContent) {
+                showToast('Warning: Prioritizing file upload.', 'orange');
+            }
+
+            if (selectedFile) {
+                await uploadFile(selectedFile);
+            } else if (textContent) {
+                await createPaste(textContent);
+            } else {
+                showToast('Please provide text or select a file.', 'orange');
+            }
+        });
+
+        async function uploadFile(file) {
+            setLoading(true);
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showResult('file', data);
+                } else {
+                    showToast(data.message || 'Upload failed', 'orange');
+                }
+            } catch (err) {
+                showToast('Backend connection error.', 'orange');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function createPaste(content) {
+            setLoading(true);
+            const payload = {
+                title: titleInput.value || 'Untitled',
+                language: langSelect.value,
+                content: content
+            };
+
+            try {
+                const response = await fetch('/api/paste', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showResult('paste', data);
+                } else {
+                    showToast(data.message || 'Paste failed', 'orange');
+                }
+            } catch (err) {
+                showToast('Backend connection error.', 'orange');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function showResult(type, data) {
+            resultCard.classList.add('active');
+            resultUrlText.innerText = data.url;
+            resultBtnsContainer.innerHTML = '';
+
+            if (type === 'paste') {
+                resultTitle.innerText = 'Generated Raw URL';
+                addResultBtn('Copy URL', () => copyText(data.url));
+                addResultBtn('Open Raw', () => window.open(data.url, '_blank'), 'purple');
+                addResultBtn('Download Text', () => download(data.url, data.title || 'paste.txt'), 'orange');
+            } else {
+                resultTitle.innerText = 'Generated File URL';
+                addResultBtn('Copy URL', () => copyText(data.url));
+                addResultBtn('Open File', () => window.open(data.url, '_blank'), 'purple');
+                addResultBtn('Download File', () => download(data.url, data.filename), 'orange');
+            }
+
+            resultCard.scrollIntoView({ behavior: 'smooth' });
+            showToast('Success! Link generated.', 'green');
+        }
+
+        function addResultBtn(text, onClick, colorClass = '') {
+            const btn = document.createElement('button');
+            btn.className = `neo-button secondary ${colorClass}`;
+            btn.innerText = text;
+            btn.onclick = onClick;
+            resultBtnsContainer.appendChild(btn);
+        }
+
+        // Helpers
+        function setLoading(isLoading) {
+            uploadBtn.disabled = isLoading;
+            uploadBtn.innerText = isLoading ? 'PROCESSING...' : 'UPLOAD / CREATE LINK';
+            uploadBtn.style.opacity = isLoading ? '0.7' : '1';
+        }
+
+        function showToast(msg, color = 'orange') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = `var(--${color})`;
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            showToast('URL copied to clipboard!', 'green');
+        }
+
+        function copyToClipboard(elementId, successMsg) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text);
+            showToast(successMsg, 'green');
+        }
+
+        function download(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
