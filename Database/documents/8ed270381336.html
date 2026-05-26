@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenaPaste - Text + File Sharing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f4;
+            color: #050505;
+            line-height: 1.6;
+        }
+
+        /* NAVBAR */
+        nav {
+            background-color: #ffffff;
+            border-bottom: 4px solid #050505;
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 8px 8px 0px #050505;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-square {
+            width: 48px;
+            height: 48px;
+            background-color: #050505;
+            border: 4px solid #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .nav-badge {
+            font-size: 12px;
+            color: #808080;
+            font-weight: 500;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 16px;
+        }
+
+        .github-btn {
+            background-color: #050505;
+            color: #ffffff;
+            border: 4px solid #050505;
+            padding: 12px 24px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .github-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #050505;
+        }
+
+        /* HERO */
+        .hero {
+            padding: 80px 40px;
+            text-align: center;
+            background-color: #f4f7f4;
+        }
+
+        .hero-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            color: #808080;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 72px;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            color: #050505;
+            margin-bottom: 48px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background-color: #c7b6f7;
+            border: 4px solid #050505;
+            padding: 18px 40px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0px #050505;
+        }
+
+        .btn-secondary {
+            background-color: #8bd3dd;
+            border: 4px solid #050505;
+            padding: 18px 40px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0px #050505;
+        }
+
+        /* SECTIONS */
+        .section {
+            padding: 80px 40px;
+            background-color: #f4f7f4;
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 48px;
+            letter-spacing: 2px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: 4px solid #050505;
+            padding: 48px;
+            border-radius: 16px;
+            box-shadow: 8px 8px 0px #050505;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* PASTE TEXT SECTION */
+        #paste-section {
+            border-left: 8px solid #c7b6f7;
+        }
+
+        .form-group {
+            margin-bottom: 32px;
+        }
+
+        .form-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            border: 4px solid #050505;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            border-radius: 8px;
+            background-color: #f4f7f4;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 6px #c7b6f7;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 16px;
+            border: 4px solid #050505;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            border-radius: 8px;
+            background-color: #f4f7f4;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 6px #c7b6f7;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 16px;
+            border: 4px solid #050505;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            border-radius: 8px;
+            background-color: #f4f7f4;
+            min-height: 300px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 6px #c7b6f7;
+        }
+
+        .btn-submit {
+            background-color: #c7b6f7;
+            border: 4px solid #050505;
+            padding: 18px 40px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .btn-submit:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #050505;
+        }
+
+        /* UPLOAD FILE SECTION */
+        #upload-section {
+            border-left: 8px solid #8bd3dd;
+        }
+
+        .upload-area {
+            border: 4px dashed #050505;
+            border-radius: 12px;
+            padding: 64px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #f4f7f4;
+            margin-bottom: 32px;
+        }
+
+        .upload-area:hover {
+            background-color: #8bd3dd;
+            transform: scale(1.02);
+        }
+
+        .upload-area.dragover {
+            background-color: #8bd3dd;
+            border-color: #050505;
+        }
+
+        .upload-text {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            color: #808080;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 32px;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: #8bd3dd;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* RESULT CARD */
+        .result-card {
+            background-color: #f4f7f4;
+            border: 4px solid #050505;
+            padding: 32px;
+            border-radius: 12px;
+            margin-top: 32px;
+            display: none;
+        }
+
+        .result-card.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-url {
+            background-color: #ffffff;
+            border: 4px solid #050505;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            word-break: break-all;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .result-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            background-color: #050505;
+            color: #ffffff;
+            border: 4px solid #050505;
+            padding: 12px 24px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-small:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0px #050505;
+        }
+
+        .metadata {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .metadata-item {
+            background-color: #ffffff;
+            padding: 16px;
+            border-radius: 8px;
+            border: 2px solid #050505;
+        }
+
+        .metadata-label {
+            font-size: 12px;
+            color: #808080;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .metadata-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* RAW + cURL PREVIEW */
+        #raw-section {
+            border-left: 8px solid #808080;
+        }
+
+        .code-viewer {
+            background-color: #050505;
+            border: 4px solid #050505;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .code-header {
+            background-color: #1a1a1a;
+            padding: 16px;
+            border-bottom: 4px solid #050505;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .code-title {
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .code-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .code-btn {
+            background-color: #808080;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            padding: 8px 16px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .code-btn:hover {
+            background-color: #ffffff;
+            color: #050505;
+        }
+
+        .code-content {
+            background-color: #050505;
+            color: #00ff00;
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            padding: 24px;
+            overflow-x: auto;
+            line-height: 1.6;
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+        }
+
+        .line-numbers {
+            color: #666666;
+            margin-right: 24px;
+            text-align: right;
+            user-select: none;
+            white-space: pre;
+        }
+
+        .code-text {
+            flex: 1;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* STATISTICS */
+        #stats-section {
+            border-left: 8px solid #fbbf3b;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background-color: #fbbf3b;
+            border: 4px solid #050505;
+            padding: 48px;
+            border-radius: 12px;
+            box-shadow: 8px 8px 0px #050505;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            color: #050505;
+        }
+
+        .stat-value {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 56px;
+            font-weight: bold;
+            color: #050505;
+            letter-spacing: 2px;
+        }
+
+        /* ABOUT */
+        #about-section {
+            border-left: 8px solid #f7b6c2;
+        }
+
+        .about-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .about-text {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 32px;
+            color: #050505;
+        }
+
+        .about-btn {
+            background-color: #f7b6c2;
+            border: 4px solid #050505;
+            padding: 18px 40px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            border-radius: 8px;
+        }
+
+        .about-btn:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0px #050505;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: #050505;
+            color: #ffffff;
+            padding: 48px 40px;
+            text-align: center;
+            border-top: 4px solid #050505;
+        }
+
+        .footer-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: #cccccc;
+            line-height: 1.8;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background-color: #050505;
+            color: #ffffff;
+            padding: 16px 24px;
+            border: 4px solid #050505;
+            border-radius: 8px;
+            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.2);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            z-index: 1000;
+            animation: toastSlide 0.3s ease;
+        }
+
+        @keyframes toastSlide {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.hide {
+            animation: toastSlideOut 0.3s ease forwards;
+        }
+
+        @keyframes toastSlideOut {
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 16px;
+                padding: 16px;
+            }
+
+            .nav-left, .nav-right {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 48px 20px;
+            }
+
+            .hero-title {
+                font-size: 48px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+
+            .section {
+                padding: 48px 20px;
+            }
+
+            .card {
+                padding: 32px 20px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+
+            .upload-area {
+                padding: 40px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-url {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .result-buttons {
+                width: 100%;
+            }
+
+            .btn-small {
+                width: 100%;
+            }
+
+            .code-content {
+                font-size: 12px;
+                padding: 16px;
+            }
+
+            .line-numbers {
+                margin-right: 12px;
+            }
+
+            .toast {
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .stat-value {
+                font-size: 40px;
+            }
+
+            nav {
+                padding: 12px;
+            }
+
+            .logo-square {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .nav-title {
+                font-size: 16px;
+            }
+
+            .github-btn {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-left">
+            <div class="logo-square">SP</div>
+            <div class="nav-text">
+                <div class="nav-title">SENAPASTE</div>
+                <div class="nav-badge">v1.0 • online</div>
+            </div>
+        </div>
+        <div class="nav-right">
+            <a href="https://github.com/senaczk" target="_blank" class="github-btn">Github</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-label">// SENAPASTE • TEXT + FILE SHARING</div>
+        <h1 class="hero-title">Paste it.<br>Upload it.<br>Share it.</h1>
+        <p class="hero-description">Create text pastes and upload files instantly.</p>
+        <div class="hero-buttons">
+            <button class="btn-primary" onclick="scrollToSection('paste-section')">Create Paste</button>
+            <button class="btn-secondary" onclick="scrollToSection('upload-section')">Upload File</button>
+        </div>
+    </section>
+
+    <!-- PASTE TEXT SECTION -->
+    <section class="section" id="paste-section">
+        <h2 class="section-title">Paste Text</h2>
+        <div class="card">
+            <form id="paste-form" onsubmit="handlePasteSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">Paste Title</label>
+                    <input type="text" class="form-input" id="paste-title" placeholder="My awesome code" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Language</label>
+                    <select class="form-select" id="paste-language" onchange="updateRawPreview()">
+                        <option value="plaintext">Plain Text</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="json">JSON</option>
+                        <option value="python">Python</option>
+                        <option value="php">PHP</option>
+                        <option value="markdown">Markdown</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Content</label>
+                    <textarea class="form-textarea" id="paste-content" placeholder="Write your code here..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Create Paste</button>
+            </form>
+
+            <div class="result-card" id="paste-result">
+                <div class="result-url">
+                    <span id="paste-url">paste.codesena.biz.id/raw/a8F2kLm</span>
+                    <button class="btn-small" onclick="copyToClipboard('paste-url')">Copy</button>
+                </div>
+                <div class="result-buttons">
+                    <button class="btn-small" onclick="openRaw('paste-url')">Open Raw</button>
+                </div>
+                <div class="metadata">
+                    <div class="metadata-item">
+                        <div class="metadata-label">Language</div>
+                        <div class="metadata-value" id="paste-meta-lang">JavaScript</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Created Date</div>
+                        <div class="metadata-value" id="paste-meta-date">Today</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Visibility</div>
+                        <div class="metadata-value">Public</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Expires</div>
+                        <div class="metadata-value">Never</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- UPLOAD FILE SECTION -->
+    <section class="section" id="upload-section">
+        <h2 class="section-title">Upload File</h2>
+        <div class="card">
+            <form id="upload-form" onsubmit="handleFileSubmit(event)">
+                <div class="upload-area" id="upload-area" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <div class="upload-text">Choose file or drop it here</div>
+                    <div class="upload-subtext">Maximum size: 95MB</div>
+                    <input type="file" id="file-input" class="upload-input" onchange="handleFileSelect(event)">
+                </div>
+
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+
+                <div class="upload-subtext" style="text-align: center; margin-bottom: 32px;">
+                    Allowed: html, css, js, json, txt, png, jpg, jpeg, gif, svg, mp4, mp3, pdf, zip, docx, xlsx
+                </div>
+
+                <button type="submit" class="btn-submit" id="upload-btn">Upload File</button>
+            </form>
+
+            <div class="result-card" id="upload-result">
+                <div class="result-url">
+                    <span id="upload-url">paste.codesena.biz.id/f/x92KaB</span>
+                    <button class="btn-small" onclick="copyToClipboard('upload-url')">Copy</button>
+                </div>
+                <div class="result-buttons">
+                    <button class="btn-small" onclick="openFile('upload-url')">Open</button>
+                    <button class="btn-small" onclick="downloadFile('upload-url')">Download</button>
+                </div>
+                <div class="metadata">
+                    <div class="metadata-item">
+                        <div class="metadata-label">Filename</div>
+                        <div class="metadata-value" id="upload-meta-name">document.pdf</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Size</div>
+                        <div class="metadata-value" id="upload-meta-size">2.5 MB</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Type</div>
+                        <div class="metadata-value" id="upload-meta-type">PDF</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Uploaded</div>
+                        <div class="metadata-value" id="upload-meta-date">Today</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Visibility</div>
+                        <div class="metadata-value">Public</div>
+                    </div>
+                    <div class="metadata-item">
+                        <div class="metadata-label">Storage</div>
+                        <div class="metadata-value">Cloud</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RAW + cURL PREVIEW -->
+    <section class="section" id="raw-section">
+        <h2 class="section-title">Raw + cURL Preview</h2>
+        <div class="card">
+            <div class="code-viewer">
+                <div class="code-header">
+                    <div class="code-title">Raw Preview</div>
+                    <div class="code-controls">
+                        <button class="code-btn" onclick="copyCode('raw-content')">Copy Raw</button>
+                        <button class="code-btn" onclick="toggleWrap()">Wrap Text</button>
+                        <button class="code-btn" onclick="downloadCode()">Download</button>
+                    </div>
+                </div>
+                <div class="code-content" id="raw-content">
+                    <div class="line-numbers" id="line-numbers"></div>
+                    <div class="code-text" id="code-text">console.log("hello sena")</div>
+                </div>
+            </div>
+
+            <div class="code-viewer" style="margin-top: 32px;">
+                <div class="code-header">
+                    <div class="code-title">cURL Preview</div>
+                    <div class="code-controls">
+                        <button class="code-btn" onclick="copyCurl()">Copy cURL</button>
+                        <button class="code-btn" onclick="copyResponse()">Copy Response</button>
+                    </div>
+                </div>
+                <div class="code-content" id="curl-content">
+                    <div class="line-numbers" id="curl-line-numbers"></div>
+                    <div class="code-text" id="curl-text">curl -X POST https://paste.codesena.biz.id/api/paste \
+-H "Content-Type: application/json" \
+-d '{
+  "title":"hello.js",
+  "language":"javascript",
+  "content":"console.log(\"hello sena\")"
+}'</div>
+                </div>
+            </div>
+
+            <div class="code-viewer" style="margin-top: 32px;">
+                <div class="code-header">
+                    <div class="code-title">Response</div>
+                </div>
+                <div class="code-content" id="response-content">
+                    <div class="line-numbers" id="response-line-numbers"></div>
+                    <div class="code-text" id="response-text">{
+  "success": true,
+  "url": "https://paste.codesena.biz.id/raw/a8F2kLm",
+  "raw": "/raw/a8F2kLm"
+}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATISTICS -->
+    <section class="section" id="stats-section">
+        <h2 class="section-title">Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Files</div>
+                <div class="stat-value">1284</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Paste</div>
+                <div class="stat-value">5621</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about-section">
+        <h2 class="section-title">About</h2>
+        <div class="card">
+            <div class="about-content">
+                <p class="about-text">SenaPaste allows users to create text pastes and upload files quickly through a simple interface.</p>
+                <a href="https://github.com/senaczk" target="_blank" class="about-btn">Github</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-title">SENAPASTE</div>
+        <div class="footer-text">
+            © 2026 SenaPaste<br>
+            Created by Arsena Luciendra
+        </div>
+    </footer>
+
+    <script>
+        // UTILITY FUNCTIONS
+        function generateRandomId(length = 7) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Link copied to clipboard!');
+            });
+        }
+
+        function openRaw(elementId) {
+            const url = document.getElementById(elementId).textContent;
+            window.open('https://' + url, '_blank');
+        }
+
+        function openFile(elementId) {
+            const url = document.getElementById(elementId).textContent;
+            window.open('https://' + url, '_blank');
+        }
+
+        function downloadFile(elementId) {
+            const url = document.getElementById(elementId).textContent;
+            const a = document.createElement('a');
+            a.href = 'https://' + url;
+            a.download = '';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // PASTE FUNCTIONALITY
+        function handlePasteSubmit(event) {
+            event.preventDefault();
+
+            const title = document.getElementById('paste-title').value;
+            const language = document.getElementById('paste-language').value;
+            const content = document.getElementById('paste-content').value;
+
+            if (!title || !content) {
+                showToast('Please fill in all fields');
+                return;
+            }
+
+            const randomId = generateRandomId();
+            const url = `paste.codesena.biz.id/raw/${randomId}`;
+
+            document.getElementById('paste-url').textContent = url;
+            document.getElementById('paste-meta-lang').textContent = language.charAt(0).toUpperCase() + language.slice(1);
+            document.getElementById('paste-meta-date').textContent = new Date().toLocaleDateString();
+
+            document.getElementById('paste-result').classList.add('show');
+            updateRawPreview();
+
+            showToast('Paste created successfully!');
+        }
+
+        function updateRawPreview() {
+            const content = document.getElementById('paste-content').value;
+            const lines = content.split('\n');
+            
+            let lineNumbers = '';
+            for (let i = 1; i <= lines.length; i++) {
+                lineNumbers += i + '\n';
+            }
+
+            document.getElementById('line-numbers').textContent = lineNumbers;
+            document.getElementById('code-text').textContent = content;
+        }
+
+        // UPLOAD FUNCTIONALITY
+        const allowedExtensions = ['html', 'css', 'js', 'json', 'txt', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'mp4', 'mp3', 'pdf', 'zip', 'docx', 'xlsx'];
+        const blockedExtensions = ['exe', 'php', 'sh', 'py', 'bat'];
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            document.getElementById('upload-area').classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            document.getElementById('upload-area').classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            document.getElementById('upload-area').classList.remove('dragover');
+
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('file-input').files = files;
+                handleFileSelect({ target: { files: files } });
+            }
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                const file = files[0];
+                const extension = file.name.split('.').pop().toLowerCase();
+
+                if (blockedExtensions.includes(extension)) {
+                    showToast('File type not allowed');
+                    return;
+                }
+
+                if (!allowedExtensions.includes(extension)) {
+                    showToast('File type not allowed');
+                    return;
+                }
+
+                if (file.size > 95 * 1024 * 1024) {
+                    showToast('File size exceeds 95MB limit');
+                    return;
+                }
+            }
+        }
+
+        function handleFileSubmit(event) {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('file-input');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showToast('Please select a file');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const extension = file.name.split('.').pop().toLowerCase();
+
+            if (blockedExtensions.includes(extension)) {
+                showToast('File type not allowed');
+                return;
+            }
+
+            if (!allowedExtensions.includes(extension)) {
+                showToast('File type not allowed');
+                return;
+            }
+
+            if (file.size > 95 * 1024 * 1024) {
+                showToast('File size exceeds 95MB limit');
+                return;
+            }
+
+            // Simulate upload
+            simulateUpload(file);
+        }
+
+        function simulateUpload(file) {
+            const progressBar = document.getElementById('progress-bar');
+            const progressFill = document.getElementById('progress-fill');
+            progressBar.style.display = 'block';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 30;
+                if (progress > 100) progress = 100;
+
+                progressFill.style.width = progress + '%';
+
+                if (progress === 100) {
+                    clearInterval(interval);
+
+                    setTimeout(() => {
+                        progressBar.style.display = 'none';
+                        progressFill.style.width = '0%';
+
+                        const randomId = generateRandomId();
+                        const url = `paste.codesena.biz.id/f/${randomId}`;
+
+                        document.getElementById('upload-url').textContent = url;
+                        document.getElementById('upload-meta-name').textContent = file.name;
+                        document.getElementById('upload-meta-size').textContent = formatFileSize(file.size);
+                        document.getElementById('upload-meta-type').textContent = file.type || 'Unknown';
+                        document.getElementById('upload-meta-date').textContent = new Date().toLocaleDateString();
+
+                        document.getElementById('upload-result').classList.add('show');
+                        showToast('File uploaded successfully!');
+
+                        document.getElementById('file-input').value = '';
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // CODE VIEWER FUNCTIONS
+        function copyCode(elementId) {
+            const codeText = document.getElementById('code-text').textContent;
+            navigator.clipboard.writeText(codeText).then(() => {
+                showToast('Code copied to clipboard!');
+            });
+        }
+
+        function copyCurl() {
+            const curlText = document.getElementById('curl-text').textContent;
+            navigator.clipboard.writeText(curlText).then(() => {
+                showToast('cURL copied to clipboard!');
+            });
+        }
+
+        function copyResponse() {
+            const responseText = document.getElementById('response-text').textContent;
+            navigator.clipboard.writeText(responseText).then(() => {
+                showToast('Response copied to clipboard!');
+            });
+        }
+
+        function toggleWrap() {
+            const codeContent = document.getElementById('raw-content');
+            if (codeContent.style.whiteSpace === 'pre-wrap') {
+                codeContent.style.whiteSpace = 'pre';
+            } else {
+                codeContent.style.whiteSpace = 'pre-wrap';
+            }
+        }
+
+        function downloadCode() {
+            const codeText = document.getElementById('code-text').textContent;
+            const blob = new Blob([codeText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'code.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize line numbers for code viewers
+        function initializeLineNumbers() {
+            const responseText = document.getElementById('response-text').textContent;
+            const responseLines = responseText.split('\n');
+            let responseLineNumbers = '';
+            for (let i = 1; i <= responseLines.length; i++) {
+                responseLineNumbers += i + '\n';
+            }
+            document.getElementById('response-line-numbers').textContent = responseLineNumbers;
+
+            const curlText = document.getElementById('curl-text').textContent;
+            const curlLines = curlText.split('\n');
+            let curlLineNumbers = '';
+            for (let i = 1; i <= curlLines.length; i++) {
+                curlLineNumbers += i + '\n';
+            }
+            document.getElementById('curl-line-numbers').textContent = curlLineNumbers;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeLineNumbers();
+            
+            // Click upload area to select file
+            document.getElementById('upload-area').addEventListener('click', function() {
+                document.getElementById('file-input').click();
+            });
+        });
+    </script>
+</body>
+</html>
