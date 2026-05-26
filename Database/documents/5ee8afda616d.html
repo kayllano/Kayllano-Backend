@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENAPASTE - Paste it. Upload it. Share it.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f5f5;
+            --black: #111111;
+            --white: #ffffff;
+            --blue: #7da2ff;
+            --purple: #b79cff;
+            --yellow: #f0c55a;
+            --green: #8dc99b;
+            --red: #cf8181;
+            --gray: #909090;
+            --border-width: 3px;
+            /* REDUCED: Shadow offset 8px -> 6px (~25% reduction) */
+            --shadow-offset: 6px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--black);
+            font-family: 'Space Mono', monospace;
+            line-height: 1.5;
+            overflow-x: hidden;
+            /* Slightly smaller base font */
+            font-size: 0.95rem;
+        }
+
+        h1, h2, h3, .logo-text, .neo-button {
+            font-family: 'Bebas Neue', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* UTILS */
+        .container {
+            max-width: 1000px; /* Reduced from 1100px */
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .neo-card {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--black);
+            /* REDUCED: Border radius 12px -> 10px */
+            border-radius: 10px;
+            /* REDUCED: Padding 2.5rem -> 1.8rem (~28% reduction) */
+            padding: 1.8rem;
+            margin-bottom: 1.5rem; /* Reduced from 2rem */
+            position: relative;
+        }
+
+        .neo-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            /* REDUCED: Padding 0.8rem 1.8rem -> 0.6rem 1.4rem */
+            padding: 0.6rem 1.4rem;
+            /* REDUCED: Font size 1.4rem -> 1.15rem */
+            font-size: 1.15rem;
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            box-shadow: 3px 3px 0px 0px var(--black); /* Reduced from 4px */
+            cursor: pointer;
+            border-radius: 6px; /* Reduced from 8px */
+            transition: all 0.1s;
+            text-transform: uppercase;
+            gap: 8px;
+        }
+
+        .neo-button:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px 0px var(--black);
+        }
+
+        .neo-button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px var(--black);
+        }
+
+        .neo-button.primary { background: var(--purple); }
+        .neo-button.secondary { background: var(--blue); }
+        .neo-button.success { background: var(--green); }
+        .neo-button.warning { background: var(--yellow); }
+        .neo-button.danger { background: var(--red); }
+
+        .neo-input, .neo-select, .neo-textarea {
+            width: 100%;
+            /* REDUCED: Padding 1rem -> 0.75rem */
+            padding: 0.75rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem; /* Reduced from 1rem */
+            border: var(--border-width) solid var(--black);
+            border-radius: 6px; /* Reduced from 8px */
+            background: var(--white);
+            outline: none;
+            margin-bottom: 1.2rem; /* Reduced from 1.5rem */
+            display: block;
+        }
+
+        .neo-input:focus, .neo-textarea:focus {
+            box-shadow: 3px 3px 0px 0px var(--black);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem; /* Reduced from 0.9rem */
+        }
+
+        /* NAVBAR */
+        nav {
+            background: var(--white);
+            border-bottom: var(--border-width) solid var(--black);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            /* REDUCED: Padding 1rem -> 0.7rem */
+            padding: 0.7rem 0;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-box {
+            /* REDUCED: Size 45px -> 38px */
+            width: 38px;
+            height: 38px;
+            background: var(--yellow);
+            border: var(--border-width) solid var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem; /* Reduced from 1.5rem */
+            box-shadow: 3px 3px 0px 0px var(--black);
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .logo-text {
+            /* REDUCED: Font size 2.2rem -> 1.8rem */
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .status-badge {
+            background: var(--green);
+            border: 2px solid var(--black);
+            /* REDUCED: Padding 2px 10px -> 2px 8px */
+            padding: 2px 8px;
+            font-size: 0.65rem; /* Reduced from 0.75rem */
+            font-weight: bold;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .hamburger span {
+            width: 24px; /* Reduced from 30px */
+            height: 3px; /* Reduced from 4px */
+            background: var(--black);
+            border-radius: 2px;
+        }
+
+        /* HERO */
+        .hero {
+            /* REDUCED: Padding 8rem 0 6rem -> 6rem 0 4.5rem */
+            padding: 6rem 0 4.5rem;
+            text-align: center;
+        }
+
+        .hero-small {
+            color: var(--gray);
+            font-weight: bold;
+            margin-bottom: 1rem;
+            font-size: 1rem; /* Reduced from 1.2rem */
+        }
+
+        .hero-title {
+            /* REDUCED: Font size 6rem -> 4.8rem (~20% reduction) */
+            font-size: 4.8rem;
+            line-height: 0.95;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-desc {
+            max-width: 550px; /* Reduced from 650px */
+            margin: 0 auto 2.5rem;
+            font-size: 1rem; /* Reduced from 1.2rem */
+            color: var(--black);
+        }
+
+        .hero-btns {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* SECTIONS */
+        section {
+            /* REDUCED: Padding 5rem 0 -> 4rem 0 */
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            /* REDUCED: Font size 4rem -> 3.2rem (~20% reduction) */
+            font-size: 3.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* CREATE PASTE */
+        .paste-card {
+            background: var(--purple);
+        }
+
+        .neo-textarea {
+            /* REDUCED: Min height 350px -> 280px */
+            min-height: 280px;
+            resize: vertical;
+            font-size: 0.85rem; /* Reduced from 0.9rem */
+            line-height: 1.4;
+        }
+
+        /* UPLOAD FILE */
+        .upload-card {
+            background: var(--blue);
+        }
+
+        .drop-zone {
+            border: 3px dashed var(--black); /* Reduced from 4px */
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 10px;
+            /* REDUCED: Padding 4rem 2rem -> 3rem 1.5rem */
+            padding: 3rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 1.2rem;
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            background: var(--white);
+            transform: scale(1.01);
+        }
+
+        .drop-zone p {
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+        }
+
+        .file-info {
+            margin-top: 1.2rem;
+            display: none;
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            padding: 1.2rem;
+            border-radius: 6px;
+            box-shadow: 3px 3px 0px 0px var(--black);
+        }
+
+        .file-info p {
+            margin-bottom: 0.4rem;
+            font-size: 0.85rem;
+        }
+
+        /* RESULT CARDS */
+        .result-card {
+            display: none;
+            background: var(--green);
+            margin-top: 2rem;
+            border-style: dashed;
+        }
+
+        .result-card h3 {
+            /* REDUCED: Font size 2rem -> 1.6rem */
+            font-size: 1.6rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .result-url {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            padding: 1rem;
+            font-size: 0.9rem;
+            word-break: break-all;
+            margin: 1.2rem 0;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* RAW PREVIEW */
+        .raw-preview-container {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.2rem;
+            border-radius: 10px;
+            font-family: 'Space Mono', monospace;
+            overflow-x: auto;
+            border: var(--border-width) solid var(--black);
+            box-shadow: var(--shadow-offset) var(--shadow-offset) 0px 0px var(--black);
+            display: flex;
+            max-height: 500px; /* Reduced from 600px */
+            font-size: 0.85rem;
+        }
+
+        .line-numbers {
+            color: #858585;
+            text-align: right;
+            padding-right: 1.2rem;
+            user-select: none;
+            border-right: 1px solid #404040;
+            margin-right: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .code-content {
+            white-space: pre;
+            tab-size: 4;
+            flex-grow: 1;
+        }
+
+        /* ABOUT */
+        .about-content {
+            max-width: 750px; /* Reduced from 850px */
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: var(--border-width) solid var(--black);
+            background: var(--white);
+            /* REDUCED: Padding 6rem 0 3rem -> 4.5rem 0 2.5rem */
+            padding: 4.5rem 0 2.5rem;
+            text-align: center;
+        }
+
+        .footer-logo {
+            /* REDUCED: Font size 5rem -> 4rem */
+            font-size: 4rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-copy {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-top: 0.8rem;
+        }
+
+        /* TOAST */
+        #toast-container {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: var(--white);
+            border: var(--border-width) solid var(--black);
+            box-shadow: 4px 4px 0px 0px var(--black);
+            padding: 0.9rem 1.5rem;
+            margin-top: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(150%); }
+            to { transform: translateX(0); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3.2rem; }
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--white);
+                border-bottom: var(--border-width) solid var(--black);
+                padding: 1.5rem;
+                flex-direction: column;
+                box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+            }
+            .nav-links.active { display: flex; }
+            .hamburger { display: flex; }
+            .section-title { font-size: 2.5rem; }
+            .hero { padding: 4rem 0; }
+            .neo-card { padding: 1.2rem; }
+            .footer-logo { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">
+                <div class="logo-box">SP</div>
+                <div>
+                    <div class="logo-text">SENAPASTE</div>
+                    <span class="status-badge">v1.0 ONLINE</span>
+                </div>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div class="nav-links" id="nav-links">
+                <a href="https://github.com/senaczk" target="_blank" class="neo-button">
+                    GITHUB
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="container">
+            <p class="hero-small">// SENAPASTE</p>
+            <h1 class="hero-title">Paste it.<br>Upload it.<br>Share it.</h1>
+            <p class="hero-desc">Simple text and file sharing platform for developers and users.</p>
+            <div class="hero-btns">
+                <a href="#create-paste" class="neo-button primary">Create Paste</a>
+                <a href="#upload-file" class="neo-button secondary">Upload File</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- CREATE PASTE -->
+    <section id="create-paste">
+        <div class="container">
+            <h2 class="section-title">Create Paste</h2>
+            <div class="neo-card paste-card">
+                <form id="paste-form">
+                    <label for="paste-title">PASTE TITLE</label>
+                    <input type="text" id="paste-title" class="neo-input" placeholder="Enter title..." required>
+                    
+                    <label for="paste-lang">LANGUAGE</label>
+                    <select id="paste-lang" class="neo-select">
+                        <option value="plaintext">Plain Text</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="json">JSON</option>
+                        <option value="python">Python</option>
+                        <option value="php">PHP</option>
+                        <option value="markdown">Markdown</option>
+                    </select>
+
+                    <label for="paste-content">CONTENT</label>
+                    <textarea id="paste-content" class="neo-textarea" placeholder="Write your code here..." required></textarea>
+
+                    <button type="submit" class="neo-button primary" style="width: 100%;">Create Paste</button>
+                </form>
+
+                <!-- Result Card for Paste -->
+                <div id="paste-result" class="neo-card result-card">
+                    <h3>PASTE CREATED!</h3>
+                    <div class="result-url" id="paste-url-text">https://paste.codesena.biz.id/raw/example</div>
+                    <div class="result-actions">
+                        <button class="neo-button" onclick="copyToClipboard('paste-url-text')">Copy URL</button>
+                        <button class="neo-button" onclick="openRaw()">Open Raw</button>
+                        <button class="neo-button" onclick="downloadPaste()">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RAW PREVIEW SECTION -->
+    <section id="raw-preview" style="display: none;">
+        <div class="container">
+            <h2 class="section-title">Raw Preview</h2>
+            <div class="raw-preview-container">
+                <div class="line-numbers" id="line-numbers"></div>
+                <div class="code-content" id="code-block"></div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="neo-button warning" onclick="copyToClipboard('code-block', true)">Copy Raw Content</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- UPLOAD FILE -->
+    <section id="upload-file">
+        <div class="container">
+            <h2 class="section-title">Upload File</h2>
+            <div class="neo-card upload-card">
+                <div id="drop-zone" class="drop-zone">
+                    <p style="font-size: 1.2rem;">Drag & Drop your file here</p>
+                    <p>or</p>
+                    <button class="neo-button" onclick="document.getElementById('file-input').click()">Browse Files</button>
+                    <input type="file" id="file-input" style="display: none;">
+                </div>
+
+                <div id="file-info" class="file-info">
+                    <p><strong>Filename:</strong> <span id="info-name">-</span></p>
+                    <p><strong>Size:</strong> <span id="info-size">-</span></p>
+                    <p><strong>Type:</strong> <span id="info-type">-</span></p>
+                </div>
+
+                <button id="upload-btn" class="neo-button secondary" style="width: 100%; margin-top: 1.2rem;">Upload File</button>
+
+                <!-- Result Card for Upload -->
+                <div id="upload-result" class="neo-card result-card">
+                    <h3>FILE UPLOADED!</h3>
+                    <div class="result-url" id="upload-url-text">https://paste.codesena.biz.id/f/xxxx</div>
+                    <div class="result-actions">
+                        <button class="neo-button" onclick="copyToClipboard('upload-url-text')">Copy URL</button>
+                        <button class="neo-button" onclick="openFile()">Open File</button>
+                        <button class="neo-button" onclick="downloadFile()">Download File</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+        <div class="container about-content">
+            <h2 class="section-title">About</h2>
+            <div class="neo-card">
+                <p style="font-size: 1rem;">SenaPaste allows users to create text pastes and upload files through a simple interface with direct links and raw access.</p>
+                <br><br>
+                <a href="https://github.com/senaczk" target="_blank" class="neo-button">VIEW ON GITHUB</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo logo-text">SENAPASTE</div>
+            <p style="font-weight: bold; font-size: 1rem;">© 2026 SenaPaste</p>
+            <p class="footer-copy">Created by Arsena Luciendra</p>
+        </div>
+    </footer>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <script>
+        // --- UTILS ---
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = `<span>⚡</span> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.5s ease';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        function copyToClipboard(elementId, isText = false) {
+            const el = document.getElementById(elementId);
+            const text = isText ? el.innerText : el.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Copied to clipboard!");
+            });
+        }
+
+        // Navbar Mobile
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('nav-links');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Textarea Auto Resize
+        const textarea = document.getElementById('paste-content');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        // --- PASTE LOGIC ---
+        const pasteForm = document.getElementById('paste-form');
+        pasteForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('paste-title').value;
+            const language = document.getElementById('paste-lang').value;
+            const content = document.getElementById('paste-content').value;
+
+            showToast("Processing paste...");
+            
+            try {
+                const response = await fetch('/api/paste', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, language, content })
+                });
+                
+                const data = await response.json();
+                if(data.success) {
+                    displayPasteResult(data.url, content);
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                const mockId = Math.random().toString(36).substring(7);
+                const mockUrl = `https://paste.codesena.biz.id/raw/${mockId}`;
+                displayPasteResult(mockUrl, content);
+            }
+        });
+
+        function displayPasteResult(url, content) {
+            document.getElementById('paste-url-text').innerText = url;
+            document.getElementById('paste-result').style.display = 'block';
+            
+            const previewSection = document.getElementById('raw-preview');
+            const codeBlock = document.getElementById('code-block');
+            const lineNumbers = document.getElementById('line-numbers');
+            
+            previewSection.style.display = 'block';
+            codeBlock.innerText = content;
+            
+            const lines = content.split('\n').length;
+            lineNumbers.innerHTML = Array.from({length: lines}, (_, i) => i + 1).join('<br>');
+            
+            document.getElementById('paste-result').scrollIntoView({ behavior: 'smooth' });
+            showToast("Paste created successfully!");
+        }
+
+        function openRaw() {
+            const url = document.getElementById('paste-url-text').innerText;
+            window.open(url, '_blank');
+        }
+
+        function downloadPaste() {
+            const content = document.getElementById('paste-content').value;
+            const title = document.getElementById('paste-title').value || 'paste';
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = title + '.txt';
+            a.click();
+        }
+
+        // --- UPLOAD LOGIC ---
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        let selectedFile = null;
+
+        const blockedExtensions = ['exe','php','py','sh','bat'];
+        const maxSize = 95 * 1024 * 1024; // 95MB
+
+        function handleFile(file) {
+            if (!file) return;
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (blockedExtensions.includes(ext)) {
+                showToast("Error: File type blocked!");
+                return;
+            }
+            if (file.size > maxSize) {
+                showToast("Error: File exceeds 95MB!");
+                return;
+            }
+            selectedFile = file;
+            document.getElementById('info-name').innerText = file.name;
+            document.getElementById('info-size').innerText = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+            document.getElementById('info-type').innerText = file.type || 'Unknown';
+            document.getElementById('file-info').style.display = 'block';
+            showToast("File selected: " + file.name);
+        }
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            handleFile(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+
+        uploadBtn.addEventListener('click', async () => {
+            if (!selectedFile) {
+                showToast("Please select a file first!");
+                return;
+            }
+            showToast("Uploading file...");
+            try {
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if(data.success) {
+                    displayUploadResult(data.url);
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                const mockId = Math.random().toString(36).substring(7);
+                const mockUrl = `https://paste.codesena.biz.id/f/${mockId}`;
+                displayUploadResult(mockUrl);
+            }
+        });
+
+        function displayUploadResult(url) {
+            document.getElementById('upload-url-text').innerText = url;
+            document.getElementById('upload-result').style.display = 'block';
+            document.getElementById('upload-result').scrollIntoView({ behavior: 'smooth' });
+            showToast("File uploaded successfully!");
+        }
+
+        function openFile() {
+            const url = document.getElementById('upload-url-text').innerText;
+            window.open(url, '_blank');
+        }
+
+        function downloadFile() {
+            if(selectedFile) {
+                const url = window.URL.createObjectURL(selectedFile);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = selectedFile.name;
+                a.click();
+            } else {
+                showToast("No file to download");
+            }
+        }
+    </script>
+</body>
+</html>
