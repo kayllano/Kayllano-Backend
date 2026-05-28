@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Hello World</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: url('https://source.unsplash.com/1600x900/?nature') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+
+    .hello-world {
+      font-size: 4rem;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+      animation: rainbow 3s infinite;
+    }
+
+    @keyframes rainbow {
+      0% { color: red; }
+      25% { color: purple; }
+      50% { color: yellow; }
+      75% { color: green; }
+      100% { color: blue; }
+    }
+
+    .ball {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      animation: float 4s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-200px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hello-world">Hello World</div>
+  <div class="ball" style="animation-delay: 0s; left: 20%;"></div>
+  <div class="ball" style="animation-delay: 0.5s; left: 50%;"></div>
+  <div class="ball" style="animation-delay: 1s; left: 80%;"></div>
+</body>
+</html>
+
+__________________________________________________________
