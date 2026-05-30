@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENACLOUD — Upload. Host. Share.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<style>
+  :root {
+    --bg: #f6f1e7;
+    --black: #111111;
+    --white: #ffffff;
+    --yellow: #ffd51f;
+    --pink: #ff5c8a;
+    --mint: #6ee7b7;
+    --blue: #7da2ff;
+    --purple: #b8b6ff;
+    --gray: #777777;
+    --border: 4px solid #111111;
+    --shadow: 8px 8px 0 #111111;
+    --shadow-hover: 12px 12px 0 #111111;
+    --shadow-active: 2px 2px 0 #111111;
+    --radius: 6px;
+    --font-head: 'Bebas Neue', sans-serif;
+    --font-body: 'Space Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    background-image: radial-gradient(circle, #11111118 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: var(--black);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 { font-family: var(--font-head); letter-spacing: 0.02em; line-height: 1; }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+  @media (min-width: 768px) { .container { padding: 0 24px; } }
+
+  /* CARD */
+  .card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover { transform: translate(-2px, -2px); box-shadow: var(--shadow-hover); }
+  .card-yellow { background: var(--yellow); }
+  .card-pink   { background: var(--pink); }
+  .card-mint   { background: var(--mint); }
+  .card-blue   { background: var(--blue); }
+  .card-purple { background: var(--purple); }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    border: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+    background: var(--white);
+    color: var(--black);
+    text-decoration: none;
+    min-height: 44px;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .btn:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-hover); }
+  .btn:active { transform: translate(3px, 3px); box-shadow: var(--shadow-active); }
+  .btn-yellow { background: var(--yellow); }
+  .btn-pink   { background: var(--pink); color: var(--white); }
+  .btn-mint   { background: var(--mint); }
+  .btn-blue   { background: var(--blue); }
+  .btn-black  { background: var(--black); color: var(--white); }
+  .btn-sm { font-size: 11px; padding: 6px 12px; min-height: 36px; box-shadow: 4px 4px 0 #111; }
+  .btn-sm:hover { box-shadow: 6px 6px 0 #111; }
+  .btn-sm:active { box-shadow: 1px 1px 0 #111; }
+  .btn-full { width: 100%; }
+
+  /* INPUTS */
+  input[type="text"], textarea, select {
+    font-family: var(--font-body);
+    font-size: 13px;
+    border: var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    color: var(--black);
+    padding: 10px 14px;
+    width: 100%;
+    min-height: 44px;
+    outline: none;
+    transition: box-shadow 0.12s;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    box-shadow: 4px 4px 0 var(--black);
+  }
+  textarea { min-height: 120px; resize: vertical; }
+  select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23111' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+  }
+
+  /* NAV */
+  nav {
+    border-bottom: var(--border);
+    background: var(--yellow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 0 var(--black);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 12px 16px;
+  }
+  .nav-logo {
+    font-family: var(--font-head);
+    font-size: 28px;
+    letter-spacing: 0.06em;
+    color: var(--black);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 8px; }
+  .nav-link {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--black);
+    text-decoration: none;
+    border: 2px solid var(--black);
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background 0.1s;
+  }
+  .nav-link:hover { background: var(--black); color: var(--white); }
+
+  /* HERO */
+  #hero {
+    padding: 60px 0 48px;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+  .hero-inner { text-align: center; }
+  .hero-title {
+    font-family: var(--font-head);
+    font-size: clamp(72px, 14vw, 144px);
+    line-height: 0.9;
+    color: var(--black);
+    position: relative;
+    display: inline-block;
+  }
+  .hero-title span { position: relative; z-index: 1; }
+  .hero-title::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: -4px;
+    right: -4px;
+    height: 18px;
+    background: var(--yellow);
+    z-index: 0;
+  }
+  .hero-tagline {
+    font-family: var(--font-head);
+    font-size: clamp(22px, 5vw, 40px);
+    letter-spacing: 0.08em;
+    margin: 16px 0 12px;
+    color: var(--black);
+  }
+  .hero-desc {
+    font-size: 13px;
+    color: var(--gray);
+    max-width: 480px;
+    margin: 0 auto 24px;
+    line-height: 1.7;
+  }
+  .hero-badges {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .badge {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    border: 2px solid var(--black);
+    border-radius: 4px;
+    padding: 5px 12px;
+    box-shadow: 3px 3px 0 var(--black);
+    letter-spacing: 0.06em;
+  }
+  .badge-cdn    { background: var(--yellow); }
+  .badge-paste  { background: var(--pink); color: var(--white); }
+  .badge-source { background: var(--mint); }
+  .badge-zip    { background: var(--blue); }
+
+  /* SECTION */
+  .section { margin-bottom: 40px; }
+  .section-label {
+    font-family: var(--font-head);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: var(--gray);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--black);
+    opacity: 0.15;
+  }
+
+  /* GENERATE CARD */
+  #generate-card {
+    padding: 28px;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+  .gen-title {
+    font-family: var(--font-head);
+    font-size: 32px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .gen-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--yellow);
+    border: var(--border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 3px 3px 0 var(--black);
+    letter-spacing: 0;
+    font-family: var(--font-body);
+  }
+
+  /* DROP ZONE */
+  #drop-zone {
+    border: 3px dashed var(--black);
+    border-radius: var(--radius);
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+    background: var(--bg);
+    position: relative;
+    margin-bottom: 16px;
+  }
+  #drop-zone:hover, #drop-zone.drag-over {
+    background: var(--yellow);
+    transform: scale(1.005);
+  }
+  #drop-zone.drag-over {
+    animation: pulse 0.8s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,213,31,0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(255,213,31,0); }
+  }
+  #drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .drop-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--black);
+    border-radius: 4px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .drop-icon-svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: var(--white);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .drop-text { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .drop-sub { font-size: 11px; color: var(--gray); }
+  .drop-files-selected {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--black);
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: var(--mint);
+    border: 2px solid var(--black);
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .gen-or {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray);
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .gen-or::before, .gen-or::after { content: ''; flex: 1; height: 2px; background: var(--black); opacity: 0.1; }
+
+  .gen-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: end;
+    margin-top: 16px;
+  }
+  @media (max-width: 500px) { .gen-row { grid-template-columns: 1fr; } }
+  .gen-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; text-transform: uppercase; }
+
+  #gen-btn { font-size: 16px; padding: 14px 28px; min-height: 52px; min-width: 180px; }
+
+  /* RESULT CARD */
+  #result-card {
+    display: none;
+    padding: 24px;
+    background: var(--mint);
+    animation: popIn 0.25s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.95) translateY(10px); opacity: 0; }
+    to   { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .result-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    background: var(--black);
+    color: var(--white);
+    padding: 3px 10px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+  .result-title { font-family: var(--font-head); font-size: 26px; margin-bottom: 4px; }
+  .result-meta { font-size: 11px; color: var(--black); opacity: 0.7; margin-bottom: 16px; }
+  .result-url-box {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    box-shadow: 4px 4px 0 var(--black);
+  }
+  .result-url-text {
+    font-size: 13px;
+    font-weight: 700;
+    flex: 1;
+    word-break: break-all;
+  }
+  .result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .result-exp {
+    font-size: 11px;
+    background: var(--white);
+    border: 2px solid var(--black);
+    border-radius: 4px;
+    padding: 4px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 12px;
+    box-shadow: 2px 2px 0 var(--black);
+  }
+
+  /* QUEUE */
+  #queue-section { display: none; }
+  .queue-item {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    box-shadow: 4px 4px 0 var(--black);
+  }
+  .queue-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .queue-name { font-size: 13px; font-weight: 700; }
+  .queue-status {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 2px solid var(--black);
+  }
+  .status-waiting    { background: var(--bg); }
+  .status-uploading  { background: var(--blue); }
+  .status-processing { background: var(--yellow); }
+  .status-complete   { background: var(--mint); }
+  .status-failed     { background: var(--pink); color: var(--white); }
+  .progress-bar-wrap {
+    height: 10px;
+    background: var(--bg);
+    border: 2px solid var(--black);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--black);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+  .progress-bar.complete { background: #22c55e; }
+  .progress-bar.failed   { background: var(--pink); }
+
+  /* HISTORY */
+  .history-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .history-search { flex: 1; min-width: 160px; min-height: 40px; }
+  .history-empty {
+    font-size: 12px;
+    color: var(--gray);
+    text-align: center;
+    padding: 20px;
+    border: 2px dashed rgba(17,17,17,0.2);
+    border-radius: var(--radius);
+  }
+  .history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .history-card {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: 4px 4px 0 var(--black);
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .history-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--black); }
+  .history-cat {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 2px 7px;
+    border: 2px solid var(--black);
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .cat-image  { background: var(--yellow); }
+  .cat-video  { background: var(--pink); color: var(--white); }
+  .cat-audio  { background: var(--purple); }
+  .cat-code   { background: var(--mint); }
+  .cat-zip    { background: var(--blue); }
+  .cat-doc    { background: var(--bg); }
+  .cat-paste  { background: var(--yellow); }
+  .history-name { font-size: 12px; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .history-meta { font-size: 10px; color: var(--gray); margin-bottom: 8px; }
+  .history-url { font-size: 10px; color: var(--black); word-break: break-all; margin-bottom: 10px; opacity: 0.6; }
+  .history-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* QR CARD — permanent inline */
+  #qr-card {
+    padding: 22px;
+    background: var(--purple);
+    animation: fadeUp 0.6s ease 0.35s both;
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .qr-card-title {
+    font-family: var(--font-head);
+    font-size: 24px;
+    margin-bottom: 4px;
+  }
+  .qr-card-sub {
+    font-size: 11px;
+    opacity: 0.65;
+    margin-bottom: 16px;
+  }
+  .qr-card-body {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 500px) { .qr-card-body { grid-template-columns: 1fr; } }
+  #qr-inline-preview {
+    width: 160px;
+    height: 160px;
+    border: var(--border);
+    border-radius: 4px;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-shadow: 4px 4px 0 var(--black);
+  }
+  #qr-inline-preview canvas,
+  #qr-inline-preview img { max-width: 100%; display: block; }
+  .qr-inline-placeholder {
+    text-align: center;
+    font-size: 11px;
+    color: var(--gray);
+    font-weight: 700;
+    line-height: 1.6;
+    padding: 8px;
+  }
+  .qr-card-controls { display: flex; flex-direction: column; gap: 12px; }
+  
+  .qr-colors-inline {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .qr-color-label { font-size: 10px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; }
+  .qr-color-input {
+    width: 100%;
+    height: 36px;
+    border: var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 2px;
+  }
+  .qr-card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* INFO CARDS */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 620px) { .info-grid { grid-template-columns: 1fr; } }
+  .info-card {
+    padding: 22px;
+    border: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .info-card-mark {
+    width: 36px;
+    height: 36px;
+    background: var(--black);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .info-card-mark svg { width: 18px; height: 18px; stroke: var(--white); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .info-card h3 { font-family: var(--font-head); font-size: 22px; margin-bottom: 8px; }
+  .info-card p { font-size: 12px; line-height: 1.7; color: var(--black); opacity: 0.75; }
+
+  /* API */
+  #api { padding: 24px; }
+  #api h2 { font-family: var(--font-head); font-size: 30px; margin-bottom: 6px; }
+  #api .api-desc { font-size: 12px; color: var(--gray); margin-bottom: 20px; }
+  .api-block { margin-bottom: 20px; }
+  .api-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .method-badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    border: 2px solid var(--black);
+    font-weight: 700;
+  }
+  .method-post { background: var(--mint); }
+  .code-block-wrap {
+    position: relative;
+    border: var(--border);
+    border-radius: var(--radius);
+    background: #1e1e1e;
+    box-shadow: 4px 4px 0 var(--black);
+    overflow: hidden;
+  }
+  .code-block-wrap pre {
+    padding: 16px;
+    overflow-x: auto;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: #d4d4d4;
+    line-height: 1.6;
+    white-space: pre;
+  }
+  .code-copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--yellow);
+    border: 2px solid var(--black);
+    border-radius: 4px;
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 var(--black);
+    transition: transform 0.1s;
+  }
+  .code-copy-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--black); }
+
+  /* FAQ */
+  #faq { padding: 24px; }
+  #faq h2 { font-family: var(--font-head); font-size: 30px; margin-bottom: 20px; }
+  .faq-item {
+    border: var(--border);
+    border-radius: var(--radius);
+    background: var(--white);
+    margin-bottom: 10px;
+    box-shadow: 4px 4px 0 var(--black);
+    overflow: hidden;
+  }
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    gap: 12px;
+    user-select: none;
+  }
+  .faq-q:hover { background: var(--yellow); }
+  .faq-arrow {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--black);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    font-style: normal;
+  }
+  .faq-item.open .faq-arrow { transform: rotate(180deg); background: var(--black); color: var(--white); }
+  .faq-a {
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--gray);
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+  .faq-item.open .faq-a { max-height: 200px; padding: 0 18px 16px; }
+
+  /* FOOTER */
+  footer {
+    border-top: var(--border);
+    background: var(--black);
+    color: var(--white);
+    padding: 32px 0;
+    margin-top: 60px;
+  }
+  .footer-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-logo { font-family: var(--font-head); font-size: 32px; color: var(--yellow); letter-spacing: 0.06em; }
+  .footer-info { font-size: 12px; opacity: 0.6; line-height: 1.7; }
+  .footer-info a { color: var(--yellow); text-decoration: none; }
+  .footer-made { font-size: 12px; opacity: 0.5; }
+
+  /* TOAST */
+  #toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .toast {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--black);
+    color: var(--white);
+    border: 3px solid var(--black);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    box-shadow: var(--shadow);
+    animation: toastIn 0.25s ease;
+    pointer-events: all;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 280px;
+  }
+  .toast.success { border-left: 6px solid var(--mint); }
+  .toast.error   { border-left: 6px solid var(--pink); }
+  .toast.warning { border-left: 6px solid var(--yellow); }
+  @keyframes toastIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes toastOut {
+    to { transform: translateX(120%); opacity: 0; }
+  }
+
+  /* SOURCE VIEWER MODAL */
+  #src-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(17,17,17,0.7);
+    z-index: 1000;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  #src-modal.open { display: flex; }
+  .src-panel {
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-hover);
+    width: 100%;
+    max-width: 820px;
+    margin: auto;
+    animation: popIn 0.2s ease;
+    overflow: hidden;
+  }
+  .src-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: var(--border);
+    background: var(--yellow);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .src-filename { font-family: var(--font-head); font-size: 20px; }
+  .src-actions { display: flex; gap: 8px; }
+  .src-code-wrap {
+    position: relative;
+    background: #f8f8f8;
+    overflow: auto;
+    max-height: 60vh;
+  }
+  .line-numbers { display: flex; }
+  .ln-nums {
+    padding: 16px 12px 16px 16px;
+    text-align: right;
+    color: var(--gray);
+    font-size: 12px;
+    font-family: var(--font-body);
+    line-height: 1.7;
+    border-right: 2px solid rgba(17,17,17,0.1);
+    background: var(--bg);
+    user-select: none;
+    min-width: 48px;
+  }
+  .ln-code {
+    flex: 1;
+    overflow-x: auto;
+    padding: 16px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    line-height: 1.7;
+    white-space: pre;
+  }
+
+  /* ZIP DOWNLOAD PAGE (inline) */
+  #zip-download-page {
+    display: none;
+    padding: 24px;
+    background: var(--blue);
+    animation: popIn 0.25s ease;
+  }
+  .zip-dl-header { font-family: var(--font-head); font-size: 28px; margin-bottom: 4px; }
+  .zip-dl-meta { font-size: 12px; margin-bottom: 16px; opacity: 0.8; }
+  .zip-info-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+  .zip-info-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.6; margin-bottom: 2px; }
+  .zip-info-value { font-size: 13px; font-weight: 700; }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: none; }
+  }
+
+  /* PREVIEW */
+  .preview-wrap {
+    margin-top: 12px;
+    border: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg);
+    max-width: 100%;
+  }
+  .preview-wrap img, .preview-wrap video, .preview-wrap audio {
+    display: block;
+    max-width: 100%;
+    max-height: 260px;
+    margin: 0 auto;
+  }
+  .preview-wrap audio { width: 100%; padding: 12px; }
+  .preview-wrap iframe { width: 100%; height: 300px; border: none; }
+
+  /* helpers */
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mb-16 { margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">SENACLOUD</a>
+    <div class="nav-links">
+      <a href="#generate-card" class="nav-link">UPLOAD</a>
+      <a href="#history-section" class="nav-link">HISTORY</a>
+      <a href="#api" class="nav-link">API</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-inner">
+      <div class="hero-title"><span>SENACLOUD</span></div>
+      <div class="hero-tagline">Upload. Host. Share.</div>
+      <p class="hero-desc">Fast file hosting, pastebin, source viewer, and ZIP sharing for developers. No login required.</p>
+      <div class="hero-badges">
+        <span class="badge badge-cdn">CDN</span>
+        <span class="badge badge-paste">PASTEBIN</span>
+        <span class="badge badge-source">SOURCE VIEWER</span>
+        <span class="badge badge-zip">ZIP SHARING</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- GENERATE CARD -->
+  <div class="section">
+    <div class="card" id="generate-card">
+      <div class="gen-title">
+        <div class="gen-icon">+</div>
+        GENERATE LINK
+      </div>
+
+      <div id="drop-zone">
+        <input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.webp,.svg,.mp4,.webm,.mp3,.wav,.pdf,.zip,.html,.css,.js,.json,.txt,.docx,.xlsx">
+        <div class="drop-icon">
+          <svg class="drop-icon-svg" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+        </div>
+        <div class="drop-text">Drag and drop files here</div>
+        <div class="drop-sub">or click to select files</div>
+        <div id="selected-files-label" style="display:none" class="drop-files-selected"></div>
+      </div>
+
+      <div class="gen-or">OR PASTE TEXT / CODE BELOW</div>
+
+      <div class="mb-16">
+        <div class="gen-label">Paste Content</div>
+        <textarea id="paste-input" placeholder="Paste plain text, HTML, CSS, JS, JSON, config, logs..."></textarea>
+      </div>
+
+      <div class="gen-row">
+        <div>
+          <div class="gen-label">Expiration</div>
+          <select id="expiry-select">
+            <option value="1h">1 Hour</option>
+            <option value="24h" selected>24 Hours</option>
+            <option value="7d">7 Days</option>
+            <option value="30d">30 Days</option>
+            <option value="never">Never</option>
+          </select>
+        </div>
+        <button class="btn btn-yellow" id="gen-btn" onclick="handleGenerate()">GENERATE LINK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT CARD -->
+  <div class="section" id="result-section">
+    <div class="card" id="result-card">
+      <span class="result-tag">SUCCESS</span>
+      <div class="result-title" id="result-filename">file.jpg</div>
+      <div class="result-meta" id="result-meta">—</div>
+      <div class="result-exp" id="result-exp">Expires: —</div>
+      <div class="result-url-box">
+        <span class="result-url-text" id="result-url">https://senacloud.my.id/u/...</span>
+        <button class="btn btn-sm" onclick="copyResultUrl()">COPY</button>
+      </div>
+      <div id="result-preview-area"></div>
+      <div class="result-actions" id="result-actions"></div>
+    </div>
+  </div>
+
+  <!-- ZIP DOWNLOAD INLINE PAGE -->
+  <div class="section" id="zip-dl-section">
+    <div class="card" id="zip-download-page">
+      <span class="result-tag" style="background:var(--blue);color:var(--black);">ZIP FILE</span>
+      <div class="zip-dl-header" id="zip-dl-name">archive.zip</div>
+      <div class="zip-dl-meta">Shared via SenaCloud</div>
+      <div class="zip-info-row">
+        <div><div class="zip-info-label">Size</div><div class="zip-info-value" id="zip-dl-size">—</div></div>
+        <div><div class="zip-info-label">Uploaded</div><div class="zip-info-value" id="zip-dl-date">—</div></div>
+        <div><div class="zip-info-label">Expires</div><div class="zip-info-value" id="zip-dl-exp">—</div></div>
+      </div>
+      <button class="btn btn-black" id="zip-dl-btn">DOWNLOAD FILE</button>
+    </div>
+  </div>
+
+  <!-- UPLOAD QUEUE -->
+  <div class="section reveal" id="queue-section">
+    <div class="section-label">UPLOAD QUEUE</div>
+    <div id="queue-list"></div>
+  </div>
+
+  <!-- QR CARD — permanent -->
+  <div class="section">
+    <div class="card" id="qr-card">
+      <div class="qr-card-title">QR CODE</div>
+      <div class="qr-card-sub">Realtime QR generator. Works standalone or auto-updates after upload.</div>
+      <div class="qr-card-body">
+        <div id="qr-inline-preview"></div>
+        <div class="qr-card-controls">
+          <div>
+            <div class="qr-color-label" style="margin-bottom:4px;">URL OR TEXT</div>
+            <input type="text" id="qr-value" value="https://senacloud.my.id" placeholder="Enter URL or text...">
+          </div>
+          <div class="qr-colors-inline">
+            <div>
+              <div class="qr-color-label">QR Color</div>
+              <input type="color" class="qr-color-input" id="qr-inline-fg" value="#111111">
+            </div>
+            <div>
+              <div class="qr-color-label">Background</div>
+              <input type="color" class="qr-color-input" id="qr-inline-bg" value="#ffffff">
+            </div>
+          </div>
+          <div class="qr-card-actions">
+            <button class="btn btn-sm btn-black" id="qr-dl-btn" onclick="downloadInlineQR()">DOWNLOAD PNG</button>
+            <button class="btn btn-sm" id="qr-copy-url-btn" onclick="copyInlineQRUrl()">COPY URL</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="section reveal" id="history-section">
+    <div class="section-label">RECENT UPLOADS</div>
+    <div class="history-controls">
+      <input type="text" class="history-search" id="history-search" placeholder="Search history..." oninput="renderHistory()">
+      <button class="btn btn-sm" onclick="purgeHistory()" style="background:var(--pink);color:#fff;border-color:var(--black);">PURGE ALL</button>
+    </div>
+    <div id="history-container"></div>
+  </div>
+
+  <!-- INFO CARDS -->
+  <div class="section reveal">
+    <div class="section-label">FEATURES</div>
+    <div class="info-grid">
+      <div class="card info-card card-mint">
+        <div class="info-card-mark">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </div>
+        <h3>SOURCE VIEWER</h3>
+        <p>HTML, CSS, JS, JSON, and TXT files are always shown as raw source code with syntax highlighting. HTML files never execute. Safe for sharing snippets and configs.</p>
+      </div>
+      <div class="card info-card card-blue">
+        <div class="info-card-mark">
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        </div>
+        <h3>ZIP SHARING</h3>
+        <p>ZIP files do not open raw. Instead they get a dedicated download page showing filename, size, upload date, and expiration status — inspired by Pixeldrain behavior.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEVELOPER API -->
+  <div class="section reveal">
+    <div class="card" id="api">
+      <h2>DEVELOPER API</h2>
+      <p class="api-desc">Integrate SenaCloud directly into your tools and workflows.</p>
+
+      <div class="api-block">
+        <div class="api-label">
+          <span class="method-badge method-post">POST</span>
+          Upload File
+        </div>
+        <div class="code-block-wrap">
+          <button class="code-copy-btn" onclick="copyCode(this)">COPY</button>
+          <pre>curl -X POST \
+  -F "file=@image.jpg" \
+  -F "expiresIn=24h" \
+  https://senacloud.my.id/api/upload</pre>
+        </div>
+      </div>
+
+      <div class="api-block">
+        <div class="api-label">
+          <span class="method-badge method-post">POST</span>
+          Create Paste
+        </div>
+        <div class="code-block-wrap">
+          <button class="code-copy-btn" onclick="copyCode(this)">COPY</button>
+          <pre>curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"content":"Hello World","expiresIn":"7d"}' \
+  https://senacloud.my.id/api/paste</pre>
+        </div>
+      </div>
+
+      <div class="api-block">
+        <div class="api-label">
+          <span class="method-badge" style="background:var(--purple)">JSON</span>
+          Upload Response
+        </div>
+        <div class="code-block-wrap">
+          <button class="code-copy-btn" onclick="copyCode(this)">COPY</button>
+          <pre>{
+  "success": true,
+  "id": "abc123",
+  "filename": "photo.jpg",
+  "size": 123456,
+  "type": "image/jpeg",
+  "url": "https://senacloud.my.id/u/abc123.jpg",
+  "downloadUrl": "https://senacloud.my.id/download/abc123",
+  "expiresAt": "2026-05-30T00:00:00.000Z"
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="section reveal">
+    <div class="card" id="faq">
+      <h2>FAQ</h2>
+      <div id="faq-list"></div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">SENACLOUD</div>
+      <div class="footer-info"><a href="https://senacloud.my.id">senacloud.my.id</a></div>
+    </div>
+    <div class="footer-made">Made by Arsena Luciendra</div>
+  </div>
+</footer>
+
+<!-- SOURCE VIEWER MODAL -->
+<div id="src-modal">
+  <div class="src-panel">
+    <div class="src-header">
+      <div class="src-filename" id="src-filename">file.html</div>
+      <div class="src-actions">
+        <button class="btn btn-sm btn-black" id="src-copy-btn" onclick="copySource()">COPY SOURCE</button>
+        <button class="btn btn-sm" id="src-raw-btn">RAW</button>
+        <button class="btn btn-sm" id="src-dl-btn">DOWNLOAD</button>
+        <button class="btn btn-sm" style="background:var(--pink);color:#fff;" onclick="closeSrcModal()">CLOSE</button>
+      </div>
+    </div>
+    <div class="src-code-wrap">
+      <div class="line-numbers">
+        <div class="ln-nums" id="src-line-nums"></div>
+        <div class="ln-code" id="src-code"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONSTANTS & STATE
+// ══════════════════════════════════════════════════════
+const API_BASE = 'https://senacloud.my.id/api';
+const HISTORY_KEY = 'senacloud_history_v2';
+const BLOCKED   = ['exe','bat','cmd','sh','jar','env'];
+const ALLOWED   = ['jpg','jpeg','png','gif','webp','svg','mp4','webm','mp3','wav','pdf','zip','html','css','js','json','txt','docx','xlsx'];
+const CODE_EXTS = ['html','htm','css','js','json','txt'];
+const IMAGE_EXTS= ['jpg','jpeg','png','gif','webp','svg'];
+const VIDEO_EXTS= ['mp4','webm'];
+const AUDIO_EXTS= ['mp3','wav'];
+
+let selectedFiles = [];
+let srcModalData  = { content: '', filename: '' };
+
+// ══════════════════════════════════════════════════════
+// FILE INPUT & DROP ZONE
+// ══════════════════════════════════════════════════════
+const dropZone     = document.getElementById('drop-zone');
+const fileInput    = document.getElementById('file-input');
+const selectedLabel= document.getElementById('selected-files-label');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  handleFileSelection(Array.from(e.dataTransfer.files));
+});
+fileInput.addEventListener('change', () => handleFileSelection(Array.from(fileInput.files)));
+
+function handleFileSelection(files) {
+  const valid = [], blocked = [];
+  files.forEach(f => {
+    const ext = f.name.split('.').pop().toLowerCase();
+    if (BLOCKED.includes(ext)) blocked.push(f.name);
+    else if (ALLOWED.includes(ext)) valid.push(f);
+    else blocked.push(f.name + ' (unsupported)');
+  });
+  if (blocked.length) showToast('Blocked: ' + blocked.join(', '), 'error');
+  if (valid.length) {
+    selectedFiles = valid;
+    selectedLabel.style.display = 'inline-block';
+    const names = valid.map(f => f.name).join(', ');
+    selectedLabel.textContent = valid.length + ' file' + (valid.length > 1 ? 's' : '') + ' selected: ' + (names.length > 60 ? names.substring(0,60) + '...' : names);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// GENERATE
+// ══════════════════════════════════════════════════════
+async function handleGenerate() {
+  const pasteText = document.getElementById('paste-input').value.trim();
+  const expiry    = document.getElementById('expiry-select').value;
+
+  if (selectedFiles.length === 0 && !pasteText) {
+    showToast('Select a file or enter paste content first.', 'warning');
+    return;
+  }
+  if (selectedFiles.length > 0 && pasteText) {
+    showToast('Both file and text detected — uploading file only.', 'warning');
+  }
+
+  if (selectedFiles.length > 0) {
+    if (selectedFiles.length === 1) await uploadSingleFile(selectedFiles[0], expiry);
+    else await uploadMultiple(selectedFiles, expiry);
+  } else {
+    await createPaste(pasteText, expiry);
+  }
+}
+
+async function uploadSingleFile(file, expiry) {
+  showQueueSection();
+  const qid = addQueueItem(file.name);
+  updateQueue(qid, 'uploading', 10);
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('expiresIn', expiry);
+
+  try {
+    let prog = 10;
+    const pt = setInterval(() => {
+      prog = Math.min(prog + Math.random() * 15, 85);
+      updateQueue(qid, 'uploading', Math.floor(prog));
+    }, 200);
+
+    const res = await fetch(API_BASE + '/upload', { method: 'POST', body: fd });
+    clearInterval(pt);
+    updateQueue(qid, 'processing', 90);
+
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message || 'Upload failed');
+
+    updateQueue(qid, 'complete', 100);
+    showResult(data, file, expiry);
+    saveHistory(data, file, expiry);
+    showToast('Upload successful!', 'success');
+    clearForm();
+  } catch (err) {
+    updateQueue(qid, 'failed', 100);
+    showToast(err.message || 'Upload failed', 'error');
+  }
+}
+
+async function uploadMultiple(files, expiry) {
+  showQueueSection();
+  const qids = files.map(f => addQueueItem(f.name));
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const qid  = qids[i];
+    updateQueue(qid, 'uploading', 10);
+
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('expiresIn', expiry);
+
+    try {
+      let prog = 10;
+      const pt = setInterval(() => {
+        prog = Math.min(prog + Math.random() * 20, 85);
+        updateQueue(qid, 'uploading', Math.floor(prog));
+      }, 150);
+
+      const res = await fetch(API_BASE + '/upload', { method: 'POST', body: fd });
+      clearInterval(pt);
+      updateQueue(qid, 'processing', 90);
+
+      const data = await res.json();
+      if (!data.success) throw new Error(data.message || 'Failed');
+      updateQueue(qid, 'complete', 100);
+      saveHistory(data, file, expiry);
+      if (i === 0) showResult(data, file, expiry);
+    } catch (err) {
+      updateQueue(qid, 'failed', 100);
+    }
+  }
+  showToast('Uploaded ' + files.length + ' files.', 'success');
+  renderHistory();
+  clearForm();
+}
+
+async function createPaste(content, expiry) {
+  showQueueSection();
+  const qid = addQueueItem('paste.txt');
+  updateQueue(qid, 'uploading', 30);
+
+  try {
+    const res = await fetch(API_BASE + '/paste', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content, expiresIn: expiry })
+    });
+    updateQueue(qid, 'processing', 80);
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message || 'Paste failed');
+    updateQueue(qid, 'complete', 100);
+    showPasteResult(data, expiry, content);
+    savePasteHistory(data, expiry);
+    showToast('Paste created!', 'success');
+    clearForm();
+  } catch (err) {
+    updateQueue(qid, 'failed', 100);
+    showToast(err.message || 'Paste failed', 'error');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// RESULT DISPLAY
+// ══════════════════════════════════════════════════════
+function showResult(data, file, expiry) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  const primaryUrl = getPrimaryUrl(data, ext);
+  
+  const rc = document.getElementById('result-card');
+  const resultUrl = document.getElementById('result-url');
+  
+  document.getElementById('result-filename').textContent = data.filename || file.name;
+  document.getElementById('result-meta').textContent = formatSize(data.size || file.size) + ' · ' + (data.type || file.type) + ' · ' + ext.toUpperCase();
+  document.getElementById('result-exp').innerHTML = 'Expires: <strong>' + formatExpiry(data.expiresAt, expiry) + '</strong>';
+  
+  resultUrl.textContent = primaryUrl;
+  qrInput.value = primaryUrl;
+  renderQR();
+
+  // Update Label
+  const tag = rc.querySelector('.result-tag');
+  if (ext === 'zip') tag.textContent = 'SHARE LINK';
+  else if (CODE_EXTS.includes(ext)) tag.textContent = 'SOURCE VIEWER LINK';
+  else tag.textContent = 'SUCCESS';
+
+  // preview
+  const pa = document.getElementById('result-preview-area');
+  pa.innerHTML = '';
+  if (IMAGE_EXTS.includes(ext)) {
+    pa.innerHTML = '<div class="preview-wrap mt-8"><img src="' + data.url + '" alt="preview"></div>';
+  } else if (VIDEO_EXTS.includes(ext)) {
+    pa.innerHTML = '<div class="preview-wrap mt-8"><video controls src="' + data.url + '"></video></div>';
+  } else if (AUDIO_EXTS.includes(ext)) {
+    pa.innerHTML = '<div class="preview-wrap mt-8"><audio controls src="' + data.url + '"></audio></div>';
+  } else if (ext === 'pdf') {
+    pa.innerHTML = '<div class="preview-wrap mt-8"><iframe src="' + data.url + '#toolbar=0"></iframe></div>';
+  }
+
+  // actions
+  const aa = document.getElementById('result-actions');
+  aa.innerHTML = '';
+
+  const openBtn = document.createElement('button');
+  openBtn.className = 'btn btn-sm btn-mint';
+  openBtn.textContent = 'OPEN';
+  openBtn.onclick = () => window.open(primaryUrl, '_blank');
+  aa.appendChild(openBtn);
+
+  if (CODE_EXTS.includes(ext)) {
+    const rawBtn = document.createElement('button');
+    rawBtn.className = 'btn btn-sm';
+    rawBtn.textContent = 'RAW';
+    rawBtn.onclick = () => window.open(data.raw || (data.url.replace('/u/', '/raw/')), '_blank');
+    aa.appendChild(rawBtn);
+  }
+
+  const dlBtn = document.createElement('button');
+  dlBtn.className = 'btn btn-sm';
+  dlBtn.textContent = 'DOWNLOAD';
+  dlBtn.onclick = () => downloadUrl(data.download || data.url, data.filename || file.name);
+  aa.appendChild(dlBtn);
+
+  rc.style.display = 'block';
+  document.getElementById('zip-download-page').style.display = 'none';
+  rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showPasteResult(data, expiry, content) {
+  const rc = document.getElementById('result-card');
+  const resultUrl = document.getElementById('result-url');
+  const primaryUrl = data.view || data.url;
+  
+  document.getElementById('result-filename').textContent = 'Paste Created';
+  document.getElementById('result-meta').textContent = content.length + ' characters · text/plain';
+  document.getElementById('result-exp').innerHTML = 'Expires: <strong>' + formatExpiry(data.expiresAt, expiry) + '</strong>';
+  
+  resultUrl.textContent = primaryUrl;
+  qrInput.value = primaryUrl;
+  renderQR();
+  
+  const tag = rc.querySelector('.result-tag');
+  tag.textContent = 'SOURCE VIEWER LINK';
+
+  document.getElementById('result-preview-area').innerHTML = '';
+
+  const aa = document.getElementById('result-actions');
+  aa.innerHTML = '';
+
+  const openBtn = document.createElement('button');
+  openBtn.className = 'btn btn-sm btn-mint';
+  openBtn.textContent = 'OPEN';
+  openBtn.onclick = () => window.open(primaryUrl, '_blank');
+  aa.appendChild(openBtn);
+
+  const rawBtn = document.createElement('button');
+  rawBtn.className = 'btn btn-sm';
+  rawBtn.textContent = 'RAW';
+  rawBtn.onclick = () => window.open(data.raw || data.url, '_blank');
+  aa.appendChild(rawBtn);
+
+  const dlBtn = document.createElement('button');
+  dlBtn.className = 'btn btn-sm';
+  dlBtn.textContent = 'DOWNLOAD';
+  dlBtn.onclick = () => {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'paste_' + data.id + '.txt';
+    a.click();
+  };
+  aa.appendChild(dlBtn);
+
+  rc.style.display = 'block';
+  document.getElementById('zip-download-page').style.display = 'none';
+  rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyResultUrl() {
+  const url = document.getElementById('result-url').textContent;
+  navigator.clipboard.writeText(url).then(() => showToast('URL copied!', 'success'));
+}
+
+// ══════════════════════════════════════════════════════
+// QUEUE
+// ══════════════════════════════════════════════════════
+let queueCounter = 0;
+
+function showQueueSection() {
+  document.getElementById('queue-section').style.display = 'block';
+  document.getElementById('queue-section').classList.add('visible');
+}
+
+function addQueueItem(name) {
+  const id   = 'q' + (++queueCounter);
+  const list = document.getElementById('queue-list');
+  const el   = document.createElement('div');
+  el.className = 'queue-item';
+  el.id = id;
+  el.innerHTML =
+    '<div class="queue-header">' +
+      '<span class="queue-name">' + escHtml(name) + '</span>' +
+      '<span class="queue-status status-waiting" id="' + id + '-status">WAITING</span>' +
+    '</div>' +
+    '<div class="progress-bar-wrap"><div class="progress-bar" id="' + id + '-bar"></div></div>';
+  list.appendChild(el);
+  return id;
+}
+
+function updateQueue(id, status, progress) {
+  const statusEl = document.getElementById(id + '-status');
+  const barEl    = document.getElementById(id + '-bar');
+  if (!statusEl || !barEl) return;
+  statusEl.className   = 'queue-status status-' + status;
+  statusEl.textContent = status.toUpperCase();
+  barEl.style.width    = progress + '%';
+  if (status === 'complete') barEl.classList.add('complete');
+  if (status === 'failed')   barEl.classList.add('failed');
+}
+
+// ══════════════════════════════════════════════════════
+// STANDALONE QR GENERATOR
+// ══════════════════════════════════════════════════════
+const qrInput = document.getElementById("qr-value");
+const qrFg = document.getElementById("qr-inline-fg");
+const qrBg = document.getElementById("qr-inline-bg");
+const qrPreview = document.getElementById("qr-inline-preview");
+
+function renderQR() {
+  const value = qrInput.value.trim();
+  qrPreview.innerHTML = "";
+  if (!value) {
+    qrPreview.innerHTML = '<div class="qr-inline-placeholder">Enter text or URL</div>';
+    return;
+  }
+  new QRCode(qrPreview, {
+    text: value,
+    width: 160,
+    height: 160,
+    colorDark: qrFg.value,
+    colorLight: qrBg.value,
+    correctLevel: QRCode.CorrectLevel.M
+  });
+}
+
+qrInput.addEventListener("input", renderQR);
+qrInput.addEventListener("keyup", renderQR);
+qrFg.addEventListener("input", renderQR);
+qrBg.addEventListener("input", renderQR);
+window.addEventListener("DOMContentLoaded", renderQR);
+
+function downloadInlineQR() {
+  const canvas = qrPreview.querySelector('canvas');
+  if (!canvas) { showToast('QR not ready yet', 'warning'); return; }
+  const a = document.createElement('a');
+  a.download = 'senacloud_qr.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+function copyInlineQRUrl() {
+  const val = qrInput.value.trim();
+  if (!val) return;
+  navigator.clipboard.writeText(val).then(() => showToast('URL copied!', 'success'));
+}
+
+// ══════════════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════════════
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
+}
+function saveLocalHistory(items) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
+}
+
+function saveHistory(data, file, expiry) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  const primaryUrl = getPrimaryUrl(data, ext);
+  const h = getHistory();
+  h.unshift({
+    id: data.id,
+    name: data.filename || file.name,
+    type: data.type || file.type,
+    size: data.size || file.size,
+    url: primaryUrl,
+    downloadUrl: data.download || data.url,
+    rawUrl: data.raw || null,
+    date: new Date().toISOString(),
+    expiresAt: data.expiresAt,
+    expiry,
+    category: getCategory(ext),
+    kind: 'file',
+    ext
+  });
+  saveLocalHistory(h.slice(0, 200));
+  renderHistory();
+}
+
+function savePasteHistory(data, expiry) {
+  const primaryUrl = data.view || data.url;
+  const h = getHistory();
+  h.unshift({
+    id: data.id,
+    name: 'paste_' + data.id,
+    type: 'text/plain',
+    size: 0,
+    url: primaryUrl,
+    rawUrl: data.raw || data.url,
+    date: new Date().toISOString(),
+    expiresAt: data.expiresAt,
+    expiry,
+    category: 'paste',
+    kind: 'paste',
+    ext: 'txt'
+  });
+  saveLocalHistory(h.slice(0, 200));
+  renderHistory();
+}
+
+function getCategory(ext) {
+  if (IMAGE_EXTS.includes(ext)) return 'image';
+  if (VIDEO_EXTS.includes(ext)) return 'video';
+  if (AUDIO_EXTS.includes(ext)) return 'audio';
+  if (CODE_EXTS.includes(ext)) return 'code';
+  if (ext === 'zip') return 'zip';
+  return 'doc';
+}
+
+function renderHistory() {
+  const q    = document.getElementById('history-search').value.toLowerCase();
+  const h    = getHistory().filter(i => !q || i.name.toLowerCase().includes(q) || i.url.toLowerCase().includes(q));
+  const cont = document.getElementById('history-container');
+
+  if (!h.length) {
+    cont.innerHTML = '<div class="history-empty">No uploads yet.</div>';
+    return;
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'history-grid';
+  h.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'history-card';
+    card.innerHTML =
+      '<span class="history-cat cat-' + item.category + '">' + item.category.toUpperCase() + '</span>' +
+      '<div class="history-name" title="' + escHtml(item.name) + '">' + escHtml(item.name) + '</div>' +
+      '<div class="history-meta">' + (item.size ? formatSize(item.size) + ' · ' : '') + new Date(item.date).toLocaleDateString() + '</div>' +
+      '<div class="history-url">' + escHtml(item.url) + '</div>' +
+      '<div class="history-actions">' +
+        '<button class="btn btn-sm btn-black" onclick="copyUrl(\'' + escHtml(item.url) + '\')">COPY</button>' +
+        '<button class="btn btn-sm btn-mint" onclick="window.open(\'' + escHtml(item.url) + '\', \'_blank\')">OPEN</button>' +
+        (item.kind === 'file' ? '<button class="btn btn-sm" onclick="downloadUrl(\'' + escHtml(item.downloadUrl || item.url) + '\',\'' + escHtml(item.name) + '\')">DL</button>' : '') +
+        '<button class="btn btn-sm" style="background:var(--purple)" onclick="qrInput.value=\'' + escHtml(item.url) + '\'; renderQR(); document.getElementById(\'qr-card\').scrollIntoView({behavior:\'smooth\'})">QR</button>' +
+        '<button class="btn btn-sm" style="background:var(--pink);color:#fff;" onclick="removeHistory(\'' + item.id + '\')">X</button>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+  cont.innerHTML = '';
+  cont.appendChild(grid);
+}
+
+function removeHistory(id) {
+  saveLocalHistory(getHistory().filter(i => i.id !== id));
+  renderHistory();
+  showToast('Removed from history.', 'success');
+}
+
+function purgeHistory() {
+  if (!confirm('Clear all history? This cannot be undone.')) return;
+  localStorage.removeItem(HISTORY_KEY);
+  renderHistory();
+  showToast('History cleared.', 'success');
+}
+
+// ══════════════════════════════════════════════════════
+// SOURCE VIEWER (Modal)
+// ══════════════════════════════════════════════════════
+async function openSourceViewer(url, filename, rawUrl) {
+  try {
+    const res  = await fetch(rawUrl || url);
+    const text = await res.text();
+    const ext  = filename.split('.').pop().toLowerCase();
+
+    document.getElementById('src-filename').textContent = filename;
+    const codeEl = document.getElementById('src-code');
+    codeEl.className = '';
+
+    const langMap = { js: 'javascript', html: 'html', css: 'css', json: 'json', txt: 'plaintext' };
+    try {
+      codeEl.innerHTML = hljs.highlight(text, { language: langMap[ext] || 'plaintext' }).value;
+    } catch {
+      codeEl.textContent = text;
+    }
+
+    document.getElementById('src-line-nums').innerHTML = text.split('\n').map((_,i) => i+1).join('<br>');
+    document.getElementById('src-raw-btn').onclick = () => window.open(rawUrl || url, '_blank');
+    document.getElementById('src-dl-btn').onclick  = () => {
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    };
+    srcModalData = { content: text, filename };
+    document.getElementById('src-modal').classList.add('open');
+  } catch {
+    showToast('Could not load source file.', 'error');
+  }
+}
+
+function copySource() {
+  navigator.clipboard.writeText(srcModalData.content).then(() => showToast('Source copied!', 'success'));
+}
+function closeSrcModal() {
+  document.getElementById('src-modal').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+function getPrimaryUrl(data, ext) {
+  if (ext === "zip") {
+    return data.shareUrl || `https://link.senacloud.my.id/s/${data.id}`;
+  }
+  if (["html", "htm", "css", "js", "json", "txt"].includes(ext)) {
+    return data.view || data.raw || data.url;
+  }
+  return data.url;
+}
+
+function copyUrl(url) {
+  navigator.clipboard.writeText(url).then(() => showToast('URL copied!', 'success'));
+}
+
+function copyCode(btn) {
+  const pre = btn.nextElementSibling;
+  navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+    btn.textContent = 'COPIED!';
+    setTimeout(() => btn.textContent = 'COPY', 1500);
+  });
+}
+
+function downloadUrl(url, filename) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename || 'download';
+  a.target = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function clearForm() {
+  document.getElementById('paste-input').value = '';
+  fileInput.value = '';
+  selectedFiles = [];
+  selectedLabel.style.display = 'none';
+}
+
+function formatSize(bytes) {
+  if (!bytes) return '0 B';
+  const k = 1024, s = ['B','KB','MB','GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + s[i];
+}
+
+function formatExpiry(expiresAt, expiry) {
+  if (expiry === 'never' || !expiresAt) return 'Never';
+  try {
+    const d = new Date(expiresAt);
+    return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch { return expiry; }
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showToast(msg, type) {
+  type = type || 'success';
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  const marks = { success: 'OK', error: 'ERR', warning: '!' };
+  t.className = 'toast ' + type;
+  t.innerHTML = '<span>' + (marks[type] || '-') + '</span><span>' + escHtml(msg) + '</span>';
+  c.appendChild(t);
+  setTimeout(() => {
+    t.style.animation = 'toastOut 0.25s ease forwards';
+    setTimeout(() => t.remove(), 250);
+  }, 3000);
+}
+
+// ══════════════════════════════════════════════════════
+// FAQ
+// ══════════════════════════════════════════════════════
+const faqs = [
+  { q: 'What is SenaCloud?', a: 'SenaCloud is a lightweight developer-focused file hosting platform. Upload files, create text pastes, preview source code, share ZIP files, and track upload history — all without login.' },
+  { q: 'Can I upload HTML files?', a: 'Yes. HTML files are fully supported and can be uploaded without issues.' },
+  { q: 'Will HTML files render as a webpage?', a: 'No. HTML files are always shown in the source viewer with syntax highlighting and line numbers. They will never execute or render as a live webpage.' },
+  { q: 'How long are files stored?', a: 'You can choose 1 Hour, 24 Hours, 7 Days, 30 Days, or Never. The expiration is set before uploading and shown in the result card and history.' },
+  { q: 'Is upload history stored online?', a: 'No. Upload history is stored only in your browser localStorage. It never leaves your device and is not synced anywhere.' },
+  { q: 'Can I upload ZIP files?', a: 'Yes. ZIP files get a dedicated download page showing filename, size, upload date, and expiration — instead of opening the raw file directly.' },
+  { q: 'Can I use the API?', a: 'Yes. SenaCloud has a simple REST API. POST to /api/upload with a file and expiresIn field, or POST to /api/paste with JSON content and expiresIn.' }
+];
+
+function initFAQ() {
+  const list = document.getElementById('faq-list');
+  faqs.forEach((f, i) => {
+    const item = document.createElement('div');
+    item.className = 'faq-item';
+    item.innerHTML =
+      '<div class="faq-q" onclick="toggleFAQ(' + i + ')">' +
+        '<span>' + escHtml(f.q) + '</span>' +
+        '<em class="faq-arrow">▼</em>' +
+      '</div>' +
+      '<div class="faq-a">' + escHtml(f.a) + '</div>';
+    list.appendChild(item);
+  });
+}
+
+function toggleFAQ(i) {
+  document.querySelectorAll('.faq-item')[i].classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════════════
+// SCROLL REVEAL
+// ══════════════════════════════════════════════════════
+function initScrollReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  initFAQ();
+  renderHistory();
+  initScrollReveal();
+});
+
+document.getElementById('src-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSrcModal();
+});
+</script>
+</body>
+</html>
