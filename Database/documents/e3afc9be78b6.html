@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SenaCloud — Upload. Host. Share.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<style>
+ :root {
+  --bg: #f6f1e7;
+  --black: #111111;
+  --white: #ffffff;
+  --yellow: #ffd51f;
+  --pink: #ff5c8a;
+  --mint: #6ee7b7;
+  --blue: #7da2ff;
+  --purple: #b8b6ff;
+  --gray: #777777;
+  --border: 4px solid #111111;
+  --shadow: 8px 8px 0 #111111;
+  --shadow-hover: 12px 12px 0 #111111;
+  --shadow-active: 2px 2px 0 #111111;
+  --radius: 4px;
+  --font-head: 'Bebas Neue', sans-serif;
+  --font-body: 'Space Mono', monospace;
+ }
+
+ *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+ html { scroll-behavior: smooth; }
+
+ body {
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  background-image: radial-gradient(circle, #11111118 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--black);
+  overflow-x: hidden;
+  opacity: 0;
+  animation: pageFadeIn 0.6s ease forwards;
+ }
+
+ @keyframes pageFadeIn {
+  to { opacity: 1; }
+ }
+
+ /* ─── TYPOGRAPHY ─── */
+ h1, h2, h3, h4 { font-family: var(--font-head); letter-spacing: 0.02em; line-height: 1; }
+
+ /* ─── LAYOUT ─── */
+ .container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 16px;
+ }
+ @media (min-width: 768px) { .container { padding: 0 24px; } }
+
+ /* ─── CARD ─── */
+ .card {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+ }
+ .card:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-hover); }
+
+ .card-yellow { background: var(--yellow); }
+ .card-pink  { background: var(--pink); }
+ .card-mint  { background: var(--mint); }
+ .card-blue  { background: var(--blue); }
+ .card-purple { background: var(--purple); }
+
+ /* ─── BUTTONS ─── */
+ .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  background: var(--white);
+  color: var(--black);
+  text-decoration: none;
+  min-height: 48px;
+  white-space: nowrap;
+  user-select: none;
+  text-transform: uppercase;
+ }
+ .btn:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-hover); background: var(--yellow); }
+ .btn:active { transform: translate(3px, 3px); box-shadow: var(--shadow-active); }
+
+ .btn-yellow { background: var(--yellow); }
+ .btn-pink  { background: var(--pink); color: var(--white); }
+ .btn-mint  { background: var(--mint); }
+ .btn-blue  { background: var(--blue); }
+ .btn-black { background: var(--black); color: var(--white); }
+ .btn-sm { font-size: 11px; padding: 8px 14px; min-height: 38px; box-shadow: 4px 4px 0 #111; }
+ .btn-sm:hover { box-shadow: 6px 6px 0 #111; }
+ .btn-sm:active { box-shadow: 1px 1px 0 #111; }
+ .btn-full { width: 100%; }
+
+ /* ─── INPUTS ─── */
+ input[type="text"], textarea, select {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--black);
+  padding: 12px 16px;
+  width: 100%;
+  min-height: 48px;
+  outline: none;
+  transition: box-shadow 0.12s;
+ }
+ input:focus, textarea:focus, select:focus {
+  box-shadow: 6px 6px 0 var(--black);
+ }
+ textarea { min-height: 120px; resize: vertical; }
+ select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23111' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+ /* ─── NAV ─── */
+ nav {
+  border-bottom: var(--border);
+  background: var(--yellow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 0 var(--black);
+ }
+ .nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 12px 16px;
+ }
+ .nav-logo {
+  font-family: var(--font-head);
+  font-size: 32px;
+  letter-spacing: 0.06em;
+  color: var(--black);
+  text-decoration: none;
+ }
+ .nav-links { display: flex; gap: 10px; }
+ .nav-link {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--black);
+  text-decoration: none;
+  border: 3px solid var(--black);
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: all 0.1s;
+  background: var(--white);
+  box-shadow: 3px 3px 0 var(--black);
+ }
+ .nav-link:hover { background: var(--black); color: var(--white); transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--black); }
+
+ /* ─── HERO ─── */
+ #hero {
+  padding: 60px 0 48px;
+ }
+ .hero-inner { text-align: center; }
+ .hero-title {
+  font-family: var(--font-head);
+  font-size: clamp(72px, 14vw, 144px);
+  line-height: 0.9;
+  color: var(--black);
+  position: relative;
+  display: inline-block;
+ }
+ .hero-title span {
+  position: relative;
+  z-index: 1;
+ }
+ .hero-title::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: -4px;
+  right: -4px;
+  height: 18px;
+  background: var(--yellow);
+  z-index: 0;
+ }
+ .hero-tagline {
+  font-family: var(--font-head);
+  font-size: clamp(22px, 5vw, 40px);
+  letter-spacing: 0.08em;
+  margin: 16px 0 12px;
+  color: var(--black);
+ }
+ .hero-desc {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray);
+  max-width: 480px;
+  margin: 0 auto 24px;
+  line-height: 1.7;
+ }
+ .hero-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+ }
+ .badge {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  border: 3px solid var(--black);
+  border-radius: 4px;
+  padding: 6px 14px;
+  box-shadow: 4px 4px 0 var(--black);
+  letter-spacing: 0.06em;
+ }
+ .badge-cdn  { background: var(--yellow); }
+ .badge-paste { background: var(--pink); color: var(--white); }
+ .badge-source { background: var(--mint); }
+ .badge-zip  { background: var(--blue); }
+
+ /* ─── SECTION SPACING ─── */
+ .section { margin-bottom: 48px; }
+
+ .section-label {
+  font-family: var(--font-head);
+  font-size: 18px;
+  letter-spacing: 0.14em;
+  color: var(--black);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+ }
+ .section-label::after {
+  content: '';
+  flex: 1;
+  height: 4px;
+  background: var(--black);
+ }
+
+ /* ─── GENERATE CARD ─── */
+ #generate-card {
+  padding: 32px;
+ }
+ .gen-title {
+  font-family: var(--font-head);
+  font-size: 36px;
+  margin-bottom: 24px;
+ }
+
+ /* drop zone */
+ #drop-zone {
+  border: 4px dashed var(--black);
+  border-radius: var(--radius);
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--bg);
+  position: relative;
+  margin-bottom: 20px;
+ }
+ #drop-zone:hover, #drop-zone.drag-over {
+  background: var(--yellow);
+ }
+ #drop-zone.drag-over {
+  animation: pulse 0.8s ease infinite;
+ }
+ @keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.98); }
+ }
+ #drop-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+ }
+ .drop-icon { 
+  width: 48px; height: 48px; margin: 0 auto 12px;
+  background: var(--white); border: 3px solid var(--black); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 4px 4px 0 var(--black);
+ }
+ .drop-text { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+ .drop-sub { font-size: 12px; color: var(--gray); font-weight: 700; }
+ .drop-files-selected {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--black);
+  margin-top: 12px;
+  padding: 8px 14px;
+  background: var(--mint);
+  border: 3px solid var(--black);
+  border-radius: 4px;
+  display: inline-block;
+  box-shadow: 4px 4px 0 var(--black);
+ }
+
+ .gen-or {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--black);
+  margin: 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+ }
+ .gen-or::before, .gen-or::after { content: ''; flex: 1; height: 3px; background: var(--black); }
+
+ .gen-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: end;
+  margin-top: 24px;
+ }
+ @media (max-width: 500px) { .gen-row { grid-template-columns: 1fr; } }
+
+ .gen-label { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 8px; text-transform: uppercase; display: block; }
+
+ #gen-btn {
+  font-size: 18px;
+  padding: 16px 32px;
+  min-height: 56px;
+  min-width: 200px;
+ }
+
+ /* ─── RESULT CARD ─── */
+ #result-card {
+  padding: 32px;
+  border-color: var(--black);
+  background: var(--mint);
+  display: none;
+ }
+ #result-card.active {
+  display: block;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+ }
+ @keyframes popIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+ }
+ .result-tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: var(--black);
+  color: var(--white);
+  padding: 4px 12px;
+  border-radius: 2px;
+  display: inline-block;
+  margin-bottom: 16px;
+ }
+ .result-title { font-family: var(--font-head); font-size: 32px; margin-bottom: 8px; }
+ .result-meta { font-size: 13px; font-weight: 700; color: var(--black); opacity: 0.7; margin-bottom: 20px; }
+ .result-url-box {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  box-shadow: 6px 6px 0 var(--black);
+ }
+ .result-url-text {
+  font-size: 14px;
+  font-weight: 700;
+  flex: 1;
+  word-break: break-all;
+ }
+ .result-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+ .result-exp {
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--white);
+  border: 3px solid var(--black);
+  border-radius: 4px;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  box-shadow: 4px 4px 0 var(--black);
+ }
+
+ /* ─── QUEUE ─── */
+ #queue-section { display: none; margin-bottom: 32px; }
+ .queue-item {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  box-shadow: 6px 6px 0 var(--black);
+ }
+ .queue-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+ .queue-name { font-size: 14px; font-weight: 700; }
+ .queue-status {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: 2px;
+  border: 3px solid var(--black);
+ }
+ .status-waiting  { background: var(--bg); }
+ .status-uploading { background: var(--blue); }
+ .status-processing{ background: var(--yellow); }
+ .status-complete { background: var(--mint); }
+ .status-failed  { background: var(--pink); color: var(--white); }
+ .progress-bar-wrap {
+  height: 14px;
+  background: var(--bg);
+  border: 3px solid var(--black);
+  border-radius: 2px;
+  overflow: hidden;
+ }
+ .progress-bar {
+  height: 100%;
+  background: var(--black);
+  transition: width 0.3s ease;
+  width: 0%;
+ }
+ .progress-bar.complete { background: #22c55e; }
+ .progress-bar.failed  { background: var(--pink); }
+
+ /* ─── QR CARD ─── */
+ #qr-section { margin-top: 24px; }
+ .qr-card {
+  padding: 32px;
+  background: var(--blue);
+ }
+ .qr-grid {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 32px;
+  align-items: start;
+ }
+ @media (max-width: 600px) { .qr-grid { grid-template-columns: 1fr; text-align: center; } }
+ .qr-card label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  margin-top: 16px;
+ }
+ .qr-card label:first-child { margin-top: 0; }
+ .qr-card input[type="color"] {
+  height: 48px; padding: 4px; cursor: pointer;
+ }
+ .qr-actions {
+  display: flex; gap: 12px; margin-top: 24px;
+ }
+ #qr-preview {
+  width: 220px;
+  height: 220px;
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 8px 8px 0 var(--black);
+  overflow: hidden;
+  transition: opacity 0.15s ease;
+  margin: 0 auto;
+ }
+ #qr-preview canvas, #qr-preview img {
+  max-width: 170px !important;
+  max-height: 170px !important;
+ }
+ .qr-empty {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray);
+  text-align: center;
+ }
+
+ /* ─── HISTORY ─── */
+ .history-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+ }
+ .history-search { flex: 1; min-width: 160px; }
+ .history-empty {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray);
+  text-align: center;
+  padding: 40px;
+  border: 4px dashed rgba(17,17,17,0.2);
+  border-radius: var(--radius);
+ }
+ .history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+ }
+ .history-card {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 6px 6px 0 var(--black);
+ }
+ .history-cat {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+  border: 3px solid var(--black);
+  border-radius: 2px;
+  display: inline-block;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+ }
+ .cat-image { background: var(--yellow); }
+ .cat-video { background: var(--pink); color: var(--white); }
+ .cat-code  { background: var(--mint); }
+ .cat-zip  { background: var(--blue); }
+ .cat-doc  { background: var(--bg); }
+ .cat-paste { background: var(--yellow); }
+ .history-name { font-size: 14px; font-weight: 700; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+ .history-meta { font-size: 12px; font-weight: 700; color: var(--gray); margin-bottom: 12px; }
+ .history-url { font-size: 11px; font-weight: 700; color: var(--black); word-break: break-all; margin-bottom: 16px; opacity: 0.6; }
+ .history-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+ /* ─── INFO CARDS ─── */
+ .info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+ }
+ @media (max-width: 620px) { .info-grid { grid-template-columns: 1fr; } }
+ .info-card {
+  padding: 28px;
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+ }
+ .info-card h3 { font-family: var(--font-head); font-size: 28px; margin-bottom: 12px; }
+ .info-card p { font-size: 14px; font-weight: 700; line-height: 1.6; color: var(--black); opacity: 0.8; }
+
+ /* ─── API ─── */
+ #api { padding: 32px; }
+ #api h2 { font-family: var(--font-head); font-size: 36px; margin-bottom: 8px; }
+ #api .api-desc { font-size: 14px; font-weight: 700; color: var(--gray); margin-bottom: 24px; }
+ .api-block { margin-bottom: 24px; }
+ .api-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+ }
+ .method-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 2px;
+  border: 3px solid var(--black);
+  font-weight: 700;
+ }
+ .method-post { background: var(--mint); }
+ .code-block-wrap {
+  position: relative;
+  border: var(--border);
+  border-radius: var(--radius);
+  background: #1e1e1e;
+  box-shadow: 8px 8px 0 var(--black);
+  overflow: hidden;
+ }
+ .code-block-wrap pre {
+  padding: 20px;
+  overflow-x: auto;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #d4d4d4;
+  line-height: 1.6;
+  white-space: pre;
+ }
+ .code-copy-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--yellow);
+  border: 3px solid var(--black);
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--black);
+  transition: all 0.1s;
+ }
+ .code-copy-btn:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--black); }
+
+ /* ─── FAQ ─── */
+ #faq { padding: 32px; }
+ #faq h2 { font-family: var(--font-head); font-size: 36px; margin-bottom: 24px; }
+ .faq-item {
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  margin-bottom: 16px;
+  box-shadow: 6px 6px 0 var(--black);
+  overflow: hidden;
+ }
+ .faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  gap: 16px;
+  user-select: none;
+ }
+ .faq-q:hover { background: var(--yellow); }
+ .faq-arrow {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--black);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+  font-style: normal;
+  font-weight: 700;
+ }
+ .faq-item.open .faq-arrow { transform: rotate(180deg); background: var(--black); color: var(--white); }
+ .faq-a {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.7;
+  color: var(--gray);
+  padding: 0 24px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+ }
+ .faq-item.open .faq-a { max-height: 200px; padding: 0 24px 24px; }
+
+ /* ─── FOOTER ─── */
+ footer {
+  border-top: var(--border);
+  background: var(--black);
+  color: var(--white);
+  padding: 48px 0;
+  margin-top: 60px;
+ }
+ .footer-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+ }
+ .footer-logo { font-family: var(--font-head); font-size: 40px; color: var(--yellow); letter-spacing: 0.06em; }
+ .footer-info { font-size: 14px; font-weight: 700; opacity: 0.8; line-height: 1.7; }
+ .footer-info a { color: var(--yellow); text-decoration: none; }
+ .footer-made { font-size: 14px; font-weight: 700; opacity: 0.6; }
+
+ /* ─── TOAST ─── */
+ #toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+ }
+ .toast {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--black);
+  color: var(--white);
+  border: 4px solid var(--black);
+  border-radius: var(--radius);
+  padding: 14px 20px;
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.2);
+  animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 320px;
+ }
+ .toast.success { border-left: 10px solid var(--mint); }
+ .toast.error  { border-left: 10px solid var(--pink); }
+ .toast.warning { border-left: 10px solid var(--yellow); }
+ @keyframes toastIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to  { transform: translateX(0); opacity: 1; }
+ }
+ @keyframes toastOut {
+  to { transform: translateX(120%); opacity: 0; }
+ }
+
+ /* ─── SOURCE VIEWER MODAL ─── */
+ #src-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(17,17,17,0.85);
+  z-index: 1000;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+ }
+ #src-modal.open { display: flex; }
+ .src-panel {
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius);
+  box-shadow: 12px 12px 0 var(--black);
+  width: 100%;
+  max-width: 820px;
+  margin: auto;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+ }
+ .src-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: var(--border);
+  background: var(--yellow);
+  flex-wrap: wrap;
+  gap: 12px;
+ }
+ .src-filename { font-family: var(--font-head); font-size: 24px; }
+ .src-actions { display: flex; gap: 10px; }
+ .src-code-wrap {
+  position: relative;
+  background: #f8f8f8;
+  overflow: auto;
+  max-height: 65vh;
+ }
+ .src-code-wrap pre {
+  margin: 0;
+  padding: 20px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.7;
+  counter-reset: lines;
+ }
+ .src-code-wrap code {
+  font-family: var(--font-body);
+ }
+ .line-numbers {
+  display: flex;
+ }
+ .ln-nums {
+  padding: 20px 14px 20px 20px;
+  text-align: right;
+  color: var(--gray);
+  font-size: 13px;
+  font-family: var(--font-body);
+  line-height: 1.7;
+  border-right: 3px solid rgba(17,17,17,0.1);
+  background: var(--bg);
+  user-select: none;
+  min-width: 56px;
+  font-weight: 700;
+ }
+ .ln-code {
+  flex: 1;
+  overflow-x: auto;
+  padding: 20px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre;
+  font-weight: 400;
+ }
+
+ /* ─── REVEAL ANIMATION ─── */
+ .reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+ }
+ .reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+ }
+
+ /* helper */
+ .gap-8 { gap: 8px; }
+ .flex-wrap { flex-wrap: wrap; }
+ .d-flex { display: flex; align-items: center; }
+ .mt-8 { margin-top: 8px; }
+ .mt-16 { margin-top: 16px; }
+ .mb-4 { margin-bottom: 4px; }
+ .mb-8 { margin-bottom: 8px; }
+ .mb-16 { margin-bottom: 16px; }
+ .text-sm { font-size: 13px; }
+ .text-xs { font-size: 11px; }
+ .text-gray { color: var(--gray); }
+ .fw-700 { font-weight: 700; }
+ .w-100 { width: 100%; }
+
+ /* preview wrapper */
+ .preview-wrap {
+  margin-top: 16px;
+  border: var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg);
+  max-width: 100%;
+  box-shadow: 6px 6px 0 var(--black);
+ }
+ .preview-wrap img, .preview-wrap video, .preview-wrap audio {
+  display: block;
+  max-width: 100%;
+  max-height: 300px;
+  margin: 0 auto;
+ }
+ .preview-wrap audio { width: 100%; padding: 16px; }
+ .preview-wrap iframe {
+  width: 100%;
+  height: 320px;
+  border: none;
+ }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+ <div class="nav-inner">
+  <a href="#" class="nav-logo">SENACLOUD</a>
+  <div class="nav-links">
+   <a href="#generate-card" class="nav-link">UPLOAD</a>
+   <a href="#history-section" class="nav-link">HISTORY</a>
+   <a href="#api" class="nav-link">API</a>
+  </div>
+ </div>
+</nav>
+
+<div class="container">
+  <!-- ─── HERO ─── -->
+  <section id="hero">
+    <div class="hero-inner">
+      <div class="hero-title"><span>SENACLOUD</span></div>
+      <div class="hero-tagline">Upload. Host. Share.</div>
+      <p class="hero-desc">Fast file hosting, pastebin, source viewer, and ZIP sharing for developers. No login required.</p>
+      <div class="hero-badges">
+        <span class="badge badge-cdn">CDN</span>
+        <span class="badge badge-paste">PASTEBIN</span>
+        <span class="badge badge-source">SOURCE VIEWER</span>
+        <span class="badge badge-zip">ZIP SHARING</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── GENERATE LINK ─── -->
+  <div class="section reveal">
+    <div class="card" id="generate-card">
+      <div class="gen-title">GENERATE LINK</div>
+      <div id="drop-zone">
+        <input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.gif,.webp,.svg,.mp4,.webm,.mp3,.wav,.pdf,.zip,.html,.css,.js,.json,.txt,.docx,.xlsx">
+        <div class="drop-icon">
+          <div style="width:20px;height:20px;border:3px solid #111;border-bottom:none;"></div>
+        </div>
+        <div class="drop-text">Drag and drop files here</div>
+        <div class="drop-sub">or click to select files</div>
+        <div id="selected-files-label" style="display:none" class="drop-files-selected"></div>
+      </div>
+      <div class="gen-or">OR PASTE TEXT / CODE BELOW</div>
+      <div class="mb-16">
+        <label class="gen-label">Paste Content</label>
+        <textarea id="paste-input" placeholder="Paste plain text, HTML, CSS, JS, JSON, config, logs..."></textarea>
+      </div>
+      <div class="gen-row">
+        <div>
+          <label class="gen-label">Expiration</label>
+          <select id="expiry-select">
+            <option value="1h">1 Hour</option>
+            <option value="24h" selected>24 Hours</option>
+            <option value="7d">7 Days</option>
+            <option value="30d">30 Days</option>
+            <option value="never">Never</option>
+          </select>
+        </div>
+        <button class="btn btn-yellow" id="gen-btn" onclick="handleGenerate()">GENERATE LINK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── QUEUE (Hidden by default) ─── -->
+  <div id="queue-section" class="reveal">
+    <div class="section-label">UPLOADING</div>
+    <div id="queue-list"></div>
+  </div>
+
+  <!-- ─── RESULT CARD (Hidden until success) ─── -->
+  <div class="section reveal" id="result-section">
+    <div class="card" id="result-card">
+      <span class="result-tag" id="result-status-tag">SUCCESS</span>
+      <div class="result-title" id="result-filename">filename.jpg</div>
+      <div class="result-meta" id="result-meta">1.2 MB · image/jpeg · JPG</div>
+      <div class="result-exp" id="result-exp">Expires: 30 May 2026 12:00</div>
+      <div class="result-url-box">
+        <span class="result-url-text" id="result-url">https://senacloud.my.id/u/abc123.jpg</span>
+        <button class="btn btn-sm btn-black" onclick="copyResultUrl()">COPY</button>
+      </div>
+      <div class="result-actions" id="result-actions-container"></div>
+      <div id="result-preview-area"></div>
+    </div>
+  </div>
+
+  <!-- ─── QR GENERATOR (Permanent) ─── -->
+  <section id="qr-section" class="section reveal">
+    <div class="section-label">QR GENERATOR</div>
+    <div class="card qr-card">
+      <div class="qr-grid">
+        <div>
+          <label>QR VALUE</label>
+          <input id="qr-value" type="text" value="https://senacloud.my.id" placeholder="Enter text or URL">
+
+          <label>QR COLOR</label>
+          <input id="qr-fg" type="color" value="#111111">
+
+          <label>BG COLOR</label>
+          <input id="qr-bg" type="color" value="#ffffff">
+
+          <div class="qr-actions">
+            <button class="btn btn-sm btn-black btn-full" id="qr-download" onclick="downloadQR()">DOWNLOAD PNG</button>
+            <button class="btn btn-sm btn-full" id="qr-clear" onclick="clearQR()">CLEAR</button>
+          </div>
+        </div>
+
+        <div id="qr-preview"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── RECENT UPLOADS ─── -->
+  <div class="section reveal" id="history-section">
+    <div class="section-label">RECENT UPLOADS</div>
+    <div class="history-controls">
+      <input type="text" class="history-search" id="history-search" placeholder="Search history..." oninput="renderHistory()">
+      <button class="btn btn-sm" onclick="purgeHistory()" style="background:var(--pink);color:#fff;border-color:var(--black);">PURGE ALL</button>
+    </div>
+    <div id="history-container"></div>
+  </div>
+
+  <!-- ─── FEATURES ─── -->
+  <div class="section reveal">
+    <div class="section-label">FEATURES</div>
+    <div class="info-grid">
+      <div class="card info-card card-mint">
+        <h3>SOURCE VIEWER</h3>
+        <p>HTML, CSS, JS, JSON, and TXT files are always shown as raw source code with syntax highlighting. HTML files never execute. Safe for sharing snippets and configs.</p>
+      </div>
+      <div class="card info-card card-blue">
+        <h3>ZIP SHARING</h3>
+        <p>ZIP files don't open raw. Instead they get a dedicated download page showing filename, size, upload date, and expiration status.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── DEVELOPER API ─── -->
+  <div class="section reveal">
+    <div class="section-label">DEVELOPER API</div>
+    <div class="card" id="api">
+      <h2>DEVELOPER API</h2>
+      <p class="api-desc">Integrate SenaCloud directly into your tools and workflows.</p>
+      <div class="api-block">
+        <div class="api-label">
+          <span class="method-badge method-post">POST</span>
+          Upload File
+        </div>
+        <div class="code-block-wrap">
+          <button class="code-copy-btn" onclick="copyCode(this)">COPY</button>
+          <pre>curl -X POST \
+ -F "file=@image.jpg" \
+ -F "expiresIn=24h" \
+ https://senacloud.my.id/api/upload</pre>
+        </div>
+      </div>
+      <div class="api-block">
+        <div class="api-label">
+          <span class="method-badge method-post">POST</span>
+          Create Paste
+        </div>
+        <div class="code-block-wrap">
+          <button class="code-copy-btn" onclick="copyCode(this)">COPY</button>
+          <pre>curl -X POST \
+ -H "Content-Type: application/json" \
+ -d '{"content":"Hello World","expiresIn":"7d"}' \
+ https://senacloud.my.id/api/paste</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── FAQ ─── -->
+  <div class="section reveal">
+    <div class="section-label">FAQ</div>
+    <div class="card" id="faq">
+      <h2>FREQUENTLY ASKED QUESTIONS</h2>
+      <div id="faq-list"></div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- ─── FOOTER ─── -->
+<footer>
+ <div class="footer-inner">
+  <div>
+   <div class="footer-logo">SENACLOUD</div>
+   <div class="footer-info"><a href="https://senacloud.my.id">senacloud.my.id</a></div>
+  </div>
+  <div class="footer-made">Made by Arsena Luciendra</div>
+ </div>
+</footer>
+
+<!-- ─── SOURCE VIEWER MODAL ─── -->
+<div id="src-modal">
+ <div class="src-panel">
+  <div class="src-header">
+   <div class="src-filename" id="src-filename">file.html</div>
+   <div class="src-actions">
+    <button class="btn btn-sm btn-black" id="src-copy-btn" onclick="copySource()">COPY</button>
+    <button class="btn btn-sm" id="src-raw-btn">RAW</button>
+    <button class="btn btn-sm" id="src-dl-btn">DOWNLOAD</button>
+    <button class="btn btn-sm btn-pink" onclick="closeSrcModal()">CLOSE</button>
+   </div>
+  </div>
+  <div class="src-code-wrap">
+   <div class="line-numbers">
+    <div class="ln-nums" id="src-line-nums"></div>
+    <div class="ln-code" id="src-code"></div>
+   </div>
+  </div>
+ </div>
+</div>
+
+<!-- ─── TOAST CONTAINER ─── -->
+<div id="toast-container"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONSTANTS & STATE
+// ══════════════════════════════════════════════════════
+const API_BASE = 'https://senacloud.my.id/api';
+const HISTORY_KEY = 'senacloud_history_v2';
+const BLOCKED = ['exe','bat','cmd','sh','jar','env'];
+const ALLOWED = ['jpg','jpeg','png','gif','webp','svg','mp4','webm','mp3','wav','pdf','zip','html','css','js','json','txt','docx','xlsx'];
+const CODE_EXTS = ['html','css','js','json','txt'];
+const IMAGE_EXTS = ['jpg','jpeg','png','gif','webp','svg'];
+const VIDEO_EXTS = ['mp4','webm'];
+const AUDIO_EXTS = ['mp3','wav'];
+
+let selectedFiles = [];
+let srcModalData = { content: '', filename: '', rawUrl: '', dlUrl: '' };
+
+// ══════════════════════════════════════════════════════
+// QR GENERATOR REAL-TIME
+// ══════════════════════════════════════════════════════
+const qrValueInput = document.getElementById("qr-value");
+const qrFgInput = document.getElementById("qr-fg");
+const qrBgInput = document.getElementById("qr-bg");
+const qrPreview = document.getElementById("qr-preview");
+
+function renderQR() {
+  const value = qrValueInput.value.trim();
+  
+  // Fade out
+  qrPreview.style.opacity = "0";
+  
+  setTimeout(() => {
+    qrPreview.innerHTML = "";
+    
+    if (!value) {
+      qrPreview.innerHTML = '<div class="qr-empty">Enter text or URL</div>';
+      qrPreview.style.opacity = "1";
+      return;
+    }
+
+    try {
+      new QRCode(qrPreview, {
+        text: value,
+        width: 170,
+        height: 170,
+        colorDark: qrFgInput.value,
+        colorLight: qrBgInput.value,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      
+      // Fade in
+      qrPreview.style.opacity = "1";
+    } catch (e) {
+      qrPreview.innerHTML = '<div class="qr-empty">QR Error</div>';
+      qrPreview.style.opacity = "1";
+    }
+  }, 150);
+}
+
+qrValueInput.addEventListener("input", renderQR);
+qrFgInput.addEventListener("input", renderQR);
+qrBgInput.addEventListener("input", renderQR);
+
+function clearQR() {
+  qrValueInput.value = "";
+  renderQR();
+}
+
+function downloadQR() {
+  const canvas = document.querySelector("#qr-preview canvas");
+  if (canvas) {
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = 'senacloud-qr.png';
+    a.click();
+  } else {
+    showToast('QR is empty.', 'warning');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// FILE INPUT & DROP ZONE
+// ══════════════════════════════════════════════════════
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const selectedLabel = document.getElementById('selected-files-label');
+
+dropZone.addEventListener('dragover', e => {
+ e.preventDefault();
+ dropZone.classList.add('drag-over');
+});
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+ e.preventDefault();
+ dropZone.classList.remove('drag-over');
+ handleFileSelection(Array.from(e.dataTransfer.files));
+});
+fileInput.addEventListener('change', () => {
+ handleFileSelection(Array.from(fileInput.files));
+});
+
+function handleFileSelection(files) {
+ const valid = [], blocked = [];
+ files.forEach(f => {
+  const ext = f.name.split('.').pop().toLowerCase();
+  if (BLOCKED.includes(ext)) blocked.push(f.name);
+  else if (ALLOWED.includes(ext)) valid.push(f);
+  else blocked.push(f.name + ' (unsupported)');
+ });
+ if (blocked.length) showToast(`Blocked: ${blocked.join(', ')}`, 'error');
+ if (valid.length) {
+  selectedFiles = valid;
+  selectedLabel.style.display = 'inline-block';
+  selectedLabel.textContent = `${valid.length} file selected`;
+ }
+}
+
+// ══════════════════════════════════════════════════════
+// GENERATE
+// ══════════════════════════════════════════════════════
+async function handleGenerate() {
+ const pasteText = document.getElementById('paste-input').value.trim();
+ const expiry = document.getElementById('expiry-select').value;
+
+ if (selectedFiles.length === 0 && !pasteText) {
+  showToast('Select a file or enter paste content first.', 'warning');
+  return;
+ }
+
+ if (selectedFiles.length > 0) {
+  if (selectedFiles.length === 1) {
+   await uploadSingleFile(selectedFiles[0], expiry);
+  } else {
+   await uploadMultiple(selectedFiles, expiry);
+  }
+ } else {
+  await createPaste(pasteText, expiry);
+ }
+}
+
+async function uploadSingleFile(file, expiry) {
+ showQueueSection();
+ const qid = addQueueItem(file.name);
+ updateQueue(qid, 'uploading', 10);
+
+ const fd = new FormData();
+ fd.append('file', file);
+ fd.append('expiresIn', expiry);
+
+ try {
+  const res = await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd });
+  updateQueue(qid, 'processing', 90);
+
+  const data = await res.json();
+  if (!data.success) throw new Error(data.message || 'Upload failed');
+
+  updateQueue(qid, 'complete', 100);
+  showResult(data, file, expiry);
+  saveHistory(data, file, expiry, 'file');
+  showToast('Upload successful!', 'success');
+  clearForm();
+ } catch (err) {
+  updateQueue(qid, 'failed', 100);
+  showToast(err.message || 'Upload failed', 'error');
+ }
+}
+
+async function uploadMultiple(files, expiry) {
+ showQueueSection();
+ const qids = files.map(f => addQueueItem(f.name));
+
+ for (let i = 0; i < files.length; i++) {
+  const file = files[i];
+  const qid = qids[i];
+  updateQueue(qid, 'uploading', 10);
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('expiresIn', expiry);
+
+  try {
+   const res = await fetch(`${API_BASE}/upload`, { method: 'POST', body: fd });
+   updateQueue(qid, 'processing', 90);
+
+   const data = await res.json();
+   if (!data.success) throw new Error(data.message || 'Failed');
+   updateQueue(qid, 'complete', 100);
+   saveHistory(data, file, expiry, 'file');
+   if (i === 0) showResult(data, file, expiry);
+  } catch (err) {
+   updateQueue(qid, 'failed', 100);
+  }
+ }
+ showToast(`Uploaded ${files.length} files.`, 'success');
+ renderHistory();
+ clearForm();
+}
+
+async function createPaste(content, expiry) {
+ showQueueSection();
+ const qid = addQueueItem('paste.txt');
+ updateQueue(qid, 'uploading', 30);
+
+ try {
+  const res = await fetch(`${API_BASE}/paste`, {
+   method: 'POST',
+   headers: { 'Content-Type': 'application/json' },
+   body: JSON.stringify({ content, expiresIn: expiry })
+  });
+  updateQueue(qid, 'processing', 80);
+  const data = await res.json();
+  if (!data.success) throw new Error(data.message || 'Paste failed');
+  updateQueue(qid, 'complete', 100);
+  showPasteResult(data, expiry, content);
+  savePasteHistory(data, expiry);
+  showToast('Paste created!', 'success');
+  clearForm();
+ } catch (err) {
+  updateQueue(qid, 'failed', 100);
+  showToast(err.message || 'Paste failed', 'error');
+ }
+}
+
+// ══════════════════════════════════════════════════════
+// RESULT DISPLAY
+// ══════════════════════════════════════════════════════
+function showResult(data, file, expiry) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  
+  const rc = document.getElementById('result-card');
+  rc.classList.add('active');
+  
+  document.getElementById('result-filename').textContent = data.filename || file.name;
+  document.getElementById('result-meta').textContent = `${formatSize(data.size || file.size)} · ${data.type || file.type} · ${ext.toUpperCase()}`;
+  document.getElementById('result-exp').textContent = `Expires: ${formatExpiry(data.expiresAt, expiry)}`;
+  document.getElementById('result-url').textContent = data.url;
+
+  const pa = document.getElementById('result-preview-area');
+  pa.innerHTML = '';
+  if (IMAGE_EXTS.includes(ext)) {
+    pa.innerHTML = `<div class="preview-wrap mt-8"><img src="${data.url}" alt="preview"></div>`;
+  } else if (VIDEO_EXTS.includes(ext)) {
+    pa.innerHTML = `<div class="preview-wrap mt-8"><video controls src="${data.url}"></video></div>`;
+  } else if (AUDIO_EXTS.includes(ext)) {
+    pa.innerHTML = `<div class="preview-wrap mt-8"><audio controls src="${data.url}"></audio></div>`;
+  }
+
+  const ac = document.getElementById('result-actions-container');
+  ac.innerHTML = `
+    <button class="btn btn-sm btn-blue" onclick="window.open('${data.url}','_blank')">OPEN LINK</button>
+    ${CODE_EXTS.includes(ext) ? `<button class="btn btn-sm btn-mint" onclick="openSourceViewer('${data.url}','${data.filename || file.name}','${data.url}','${data.url}')">VIEW SOURCE</button>` : ''}
+  `;
+
+  // Update QR
+  qrValueInput.value = data.url;
+  renderQR();
+  
+  document.getElementById('result-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showPasteResult(data, expiry, content) {
+  const rc = document.getElementById('result-card');
+  rc.classList.add('active');
+  
+  document.getElementById('result-filename').textContent = `paste_${data.id}.txt`;
+  document.getElementById('result-meta').textContent = `Plain Text · TXT`;
+  document.getElementById('result-exp').textContent = `Expires: ${formatExpiry(data.expiresAt, expiry)}`;
+  document.getElementById('result-url').textContent = data.url;
+
+  const pa = document.getElementById('result-preview-area');
+  pa.innerHTML = `<div class="preview-wrap mt-8" style="padding:16px;font-size:12px;white-space:pre-wrap;background:#fff;border:2px solid #111;">${escHtml(content.substring(0, 500))}${content.length > 500 ? '...' : ''}</div>`;
+
+  const ac = document.getElementById('result-actions-container');
+  ac.innerHTML = `
+    <button class="btn btn-sm btn-blue" onclick="window.open('${data.url}','_blank')">OPEN LINK</button>
+    <button class="btn btn-sm btn-mint" onclick="openSourceViewer('${data.url}','paste_${data.id}.txt','${data.raw || data.url}','${data.url}')">VIEW SOURCE</button>
+  `;
+
+  // Update QR
+  qrValueInput.value = data.url;
+  renderQR();
+  
+  document.getElementById('result-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyResultUrl() {
+ const url = document.getElementById('result-url').textContent;
+ navigator.clipboard.writeText(url).then(() => showToast('URL copied!', 'success'));
+}
+
+// ══════════════════════════════════════════════════════
+// QUEUE
+// ══════════════════════════════════════════════════════
+let queueItems = {};
+let queueCounter = 0;
+
+function showQueueSection() {
+ document.getElementById('queue-section').style.display = 'block';
+}
+
+function addQueueItem(name) {
+ const id = 'q' + (++queueCounter);
+ const list = document.getElementById('queue-list');
+ const el = document.createElement('div');
+ el.className = 'queue-item';
+ el.id = id;
+ el.innerHTML = `
+  <div class="queue-header">
+   <span class="queue-name">${escHtml(name)}</span>
+   <span class="queue-status status-waiting" id="${id}-status">WAITING</span>
+  </div>
+  <div class="progress-bar-wrap">
+   <div class="progress-bar" id="${id}-bar"></div>
+  </div>`;
+ list.appendChild(el);
+ queueItems[id] = el;
+ return id;
+}
+
+function updateQueue(id, status, progress) {
+ const statusEl = document.getElementById(`${id}-status`);
+ const barEl = document.getElementById(`${id}-bar`);
+ if (!statusEl || !barEl) return;
+ statusEl.className = `queue-status status-${status}`;
+ statusEl.textContent = status.toUpperCase();
+ barEl.style.width = `${progress}%`;
+ if (status === 'complete') barEl.classList.add('complete');
+ if (status === 'failed') barEl.classList.add('failed');
+}
+
+// ══════════════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════════════
+function getHistory() {
+ try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
+}
+function saveLocalHistory(items) {
+ localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
+}
+
+function saveHistory(data, file, expiry, type) {
+ const ext = file.name.split('.').pop().toLowerCase();
+ const cat = getCategory(ext);
+ const h = getHistory();
+ h.unshift({
+  id: data.id,
+  name: data.filename || file.name,
+  type: data.type || file.type,
+  size: data.size || file.size,
+  url: data.url,
+  downloadUrl: data.downloadUrl,
+  rawUrl: null,
+  date: new Date().toISOString(),
+  expiresAt: data.expiresAt,
+  expiry,
+  category: cat,
+  kind: 'file',
+  ext
+ });
+ saveLocalHistory(h.slice(0, 200));
+ renderHistory();
+}
+
+function savePasteHistory(data, expiry) {
+ const h = getHistory();
+ h.unshift({
+  id: data.id,
+  name: `paste_${data.id}`,
+  type: 'text/plain',
+  size: 0,
+  url: data.url,
+  rawUrl: data.raw,
+  date: new Date().toISOString(),
+  expiresAt: data.expiresAt,
+  expiry,
+  category: 'paste',
+  kind: 'paste',
+  ext: 'txt'
+ });
+ saveLocalHistory(h.slice(0, 200));
+ renderHistory();
+}
+
+function getCategory(ext) {
+ if (IMAGE_EXTS.includes(ext)) return 'image';
+ if (VIDEO_EXTS.includes(ext)) return 'video';
+ if (AUDIO_EXTS.includes(ext)) return 'audio';
+ if (CODE_EXTS.includes(ext)) return 'code';
+ if (ext === 'zip') return 'zip';
+ return 'doc';
+}
+
+function renderHistory() {
+ const q = document.getElementById('history-search').value.toLowerCase();
+ const h = getHistory().filter(i => !q || i.name.toLowerCase().includes(q) || i.url.toLowerCase().includes(q));
+ const cont = document.getElementById('history-container');
+
+ if (!h.length) {
+  cont.innerHTML = '<div class="history-empty">No uploads yet.</div>';
+  return;
+ }
+
+ const grid = document.createElement('div');
+ grid.className = 'history-grid';
+ h.forEach(item => {
+  const card = document.createElement('div');
+  card.className = 'history-card';
+  card.innerHTML = `
+   <span class="history-cat cat-${item.category}">${item.category.toUpperCase()}</span>
+   <div class="history-name" title="${escHtml(item.name)}">${escHtml(item.name)}</div>
+   <div class="history-meta">${item.size ? formatSize(item.size) + ' · ' : ''}${new Date(item.date).toLocaleDateString()}</div>
+   <div class="history-url">${escHtml(item.url)}</div>
+   <div class="history-actions">
+    <button class="btn btn-sm btn-black" onclick="copyUrl('${escHtml(item.url)}')">COPY</button>
+    <button class="btn btn-sm btn-mint" onclick="openHistoryItem('${item.id}','${escHtml(item.url)}','${escHtml(item.name)}','${item.ext || ''}','${escHtml(item.rawUrl||'')}')">OPEN</button>
+    <button class="btn btn-sm btn-blue" onclick="setQRValue('${escHtml(item.url)}')">QR</button>
+    <button class="btn btn-sm btn-pink" onclick="removeHistory('${item.id}')">X</button>
+   </div>`;
+  grid.appendChild(card);
+ });
+ cont.innerHTML = '';
+ cont.appendChild(grid);
+}
+
+function setQRValue(url) {
+  qrValueInput.value = url;
+  renderQR();
+  document.getElementById('qr-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function openHistoryItem(id, url, name, ext, rawUrl) {
+ if (CODE_EXTS.includes(ext)) {
+  openSourceViewer(url, name, rawUrl || url, url);
+ } else {
+  window.open(url, '_blank');
+ }
+}
+
+function removeHistory(id) {
+ const h = getHistory().filter(i => i.id !== id);
+ saveLocalHistory(h);
+ renderHistory();
+ showToast('Removed from history.', 'success');
+}
+
+function purgeHistory() {
+ if (!confirm('Clear all history? This cannot be undone.')) return;
+ localStorage.removeItem(HISTORY_KEY);
+ renderHistory();
+ showToast('History cleared.', 'success');
+}
+
+// ══════════════════════════════════════════════════════
+// SOURCE VIEWER
+// ══════════════════════════════════════════════════════
+async function openSourceViewer(url, filename, rawUrl, dlUrl) {
+ try {
+  const res = await fetch(rawUrl || url);
+  const text = await res.text();
+  document.getElementById('src-filename').textContent = filename;
+  const ext = filename.split('.').pop().toLowerCase();
+
+  const codeEl = document.getElementById('src-code');
+  codeEl.textContent = text;
+  codeEl.className = '';
+
+  const langMap = { js: 'javascript', html: 'html', css: 'css', json: 'json', txt: 'plaintext' };
+  const lang = langMap[ext] || 'plaintext';
+
+  try {
+   const highlighted = hljs.highlight(text, { language: lang }).value;
+   codeEl.innerHTML = highlighted;
+  } catch {
+   codeEl.textContent = text;
+  }
+
+  const lines = text.split('\n');
+  document.getElementById('src-line-nums').innerHTML = lines.map((_, i) => (i+1)).join('<br>');
+
+  document.getElementById('src-raw-btn').onclick = () => window.open(rawUrl || url, '_blank');
+  document.getElementById('src-dl-btn').onclick = () => {
+   const blob = new Blob([text], { type: 'text/plain' });
+   const a = document.createElement('a');
+   a.href = URL.createObjectURL(blob);
+   a.download = filename;
+   a.click();
+  };
+  srcModalData = { content: text, filename };
+  document.getElementById('src-modal').classList.add('open');
+ } catch {
+  showToast('Could not load source file.', 'error');
+ }
+}
+
+function copySource() {
+ navigator.clipboard.writeText(srcModalData.content).then(() => showToast('Source copied!', 'success'));
+}
+
+function closeSrcModal() {
+ document.getElementById('src-modal').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════
+function copyUrl(url) {
+ navigator.clipboard.writeText(url).then(() => showToast('URL copied!', 'success'));
+}
+
+function copyCode(btn) {
+ const pre = btn.nextElementSibling;
+ navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+  btn.textContent = 'COPIED!';
+  setTimeout(() => btn.textContent = 'COPY', 1500);
+ });
+}
+
+function clearForm() {
+ document.getElementById('paste-input').value = '';
+ document.getElementById('file-input').value = '';
+ selectedFiles = [];
+ document.getElementById('selected-files-label').style.display = 'none';
+}
+
+function formatSize(bytes) {
+ if (!bytes) return '0 B';
+ const k = 1024;
+ const s = ['B','KB','MB','GB'];
+ const i = Math.floor(Math.log(bytes) / Math.log(k));
+ return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + s[i];
+}
+
+function formatExpiry(expiresAt, expiry) {
+ if (expiry === 'never' || !expiresAt) return 'Never';
+ try {
+  const d = new Date(expiresAt);
+  return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+ } catch { return expiry; }
+}
+
+function escHtml(str) {
+ if (!str) return '';
+ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showToast(msg, type = 'success') {
+ const c = document.getElementById('toast-container');
+ const t = document.createElement('div');
+ t.className = `toast ${type}`;
+ t.innerHTML = `<span>${escHtml(msg)}</span>`;
+ c.appendChild(t);
+ setTimeout(() => {
+  t.style.animation = 'toastOut 0.3s ease forwards';
+  setTimeout(() => t.remove(), 300);
+ }, 3000);
+}
+
+// ══════════════════════════════════════════════════════
+// FAQ
+// ══════════════════════════════════════════════════════
+const faqs = [
+ { q: 'What is SenaCloud?', a: 'SenaCloud is a lightweight developer-focused file hosting platform. You can upload files, create text pastes, preview source code, share ZIP files, and track upload history — all without login.' },
+ { q: 'Can I upload HTML files?', a: 'Yes, HTML files are fully supported and can be uploaded without any issues.' },
+ { q: 'Will HTML files render as a webpage?', a: 'No. HTML files are always shown in the source viewer with syntax highlighting and line numbers. They will never execute or render as a live webpage.' },
+ { q: 'How long are files stored?', a: 'You can choose from 1 Hour, 24 Hours, 7 Days, 30 Days, or Never. The expiration is set before uploading and displayed in the result card and history.' },
+ { q: 'Is upload history stored online?', a: 'No. Upload history is stored only in your browser\'s localStorage. It never leaves your device and is not synced anywhere.' },
+ { q: 'Can I upload ZIP files?', a: 'Yes. ZIP files get a dedicated download page showing the filename, size, upload date, and expiration — instead of opening the raw file directly.' },
+ { q: 'Can I use the API?', a: 'Yes. SenaCloud has a simple REST API. POST to /api/upload with a file and expiresIn field, or POST to /api/paste with JSON content and expiresIn.' }
+];
+
+function initFAQ() {
+ const list = document.getElementById('faq-list');
+ faqs.forEach((f, i) => {
+  const item = document.createElement('div');
+  item.className = 'faq-item';
+  item.innerHTML = `
+   <div class="faq-q" onclick="toggleFAQ(${i})">
+    <span>${escHtml(f.q)}</span>
+    <em class="faq-arrow">V</em>
+   </div>
+   <div class="faq-a">${escHtml(f.a)}</div>`;
+  list.appendChild(item);
+ });
+}
+
+function toggleFAQ(index) {
+ const items = document.querySelectorAll('.faq-item');
+ items.forEach((item, i) => {
+  if (i === index) item.classList.toggle('open');
+  else item.classList.remove('open');
+ });
+}
+
+// ══════════════════════════════════════════════════════
+// REVEAL ANIMATION
+// ══════════════════════════════════════════════════════
+function initReveal() {
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  
+  reveals.forEach(r => observer.observe(r));
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+ renderHistory();
+ initFAQ();
+ renderQR();
+ initReveal();
+});
+</script>
+</body>
+</html>
