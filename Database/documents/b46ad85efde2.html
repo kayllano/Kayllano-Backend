@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SenaCloud | Upload. Host. Share.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f6f1e7;
+            --black: #111111;
+            --white: #ffffff;
+            --yellow: #ffd51f;
+            --pink: #ff5c8a;
+            --mint: #6ee7b7;
+            --blue: #7da2ff;
+            --purple: #b8b6ff;
+            --border: 4px solid var(--black);
+            --shadow: 8px 8px 0px var(--black);
+            --shadow-hover: 12px 12px 0px var(--black);
+            
+            /* Spacing System */
+            --card-pad-desktop: 32px;
+            --card-pad-mobile: 22px;
+            --gap-title-content: 20px;
+            --gap-content-input: 16px;
+            --gap-input-input: 14px;
+            --gap-input-btn: 20px;
+            --gap-btn-bottom: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--black) 1px, transparent 1px);
+            background-size: 30px 30px;
+            font-family: 'Space Mono', monospace;
+            color: var(--black);
+            overflow-x: hidden;
+            line-height: 1.4;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Bebas Neue', cursive;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stickers */
+        .sticker {
+            position: absolute;
+            background: var(--white);
+            border: var(--border);
+            padding: 0.5rem 1rem;
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.5rem;
+            box-shadow: 4px 4px 0px var(--black);
+            z-index: 10;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .sticker-live { background: var(--pink); top: 5%; left: 5%; transform: rotate(-15deg); }
+        .sticker-cdn { background: var(--yellow); top: 15%; right: 5%; transform: rotate(10deg); }
+        .sticker-fast { background: var(--mint); top: 40%; left: 2%; transform: rotate(5deg); }
+        .sticker-api { background: var(--blue); top: 60%; right: 2%; transform: rotate(-8deg); }
+        .sticker-beta { background: var(--purple); bottom: 5%; right: 5%; transform: rotate(12deg); }
+
+        /* Neobrutalism Cards - Improved Spacing */
+        .card {
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            padding: var(--card-pad-desktop);
+            margin-bottom: 2.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-rotate-left { transform: rotate(-1deg); }
+        .card-rotate-right { transform: rotate(1deg); }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.8rem 1.8rem;
+            background: var(--yellow);
+            border: var(--border);
+            box-shadow: 4px 4px 0px var(--black);
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.4rem;
+            text-decoration: none;
+            color: var(--black);
+            cursor: pointer;
+            transition: all 0.1s;
+            text-align: center;
+            border-radius: 0;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px var(--black);
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px var(--black);
+        }
+
+        .btn-mint { background: var(--mint); }
+        .btn-blue { background: var(--blue); }
+        .btn-pink { background: var(--pink); }
+        .btn-purple { background: var(--purple); }
+        .btn-white { background: var(--white); }
+        .btn-block { display: flex; width: 100%; }
+
+        /* Section Specific Styles */
+        header { padding: 5rem 0; text-align: center; position: relative; }
+        header h1 { 
+            font-size: 10rem; 
+            line-height: 1; 
+            margin-bottom: 1.5rem; 
+            letter-spacing: 4px;
+            text-shadow: 6px 6px 0px var(--yellow);
+            -webkit-text-stroke: 2px var(--black);
+        }
+        header p { font-size: 2rem; font-weight: bold; background: var(--white); display: inline-block; padding: 0.5rem 1.5rem; border: var(--border); box-shadow: 4px 4px 0px var(--black); transform: rotate(-1deg); }
+
+        section { position: relative; padding: 3rem 0; }
+        .section-title { font-size: 4rem; margin-bottom: var(--gap-title-content); display: inline-block; padding: 0.5rem 2rem; background: var(--white); border: var(--border); box-shadow: 6px 6px 0px var(--black); transform: rotate(-2deg); }
+
+        #generate-link { background: var(--yellow); border-top: var(--border); border-bottom: var(--border); }
+        #result-section { background: var(--mint); border-bottom: var(--border); display: none; }
+        #qr-section { background: var(--blue); border-bottom: var(--border); }
+        #history-section { background: var(--bg); }
+        
+        .split-section { display: grid; grid-template-columns: 1fr 1fr; border-top: var(--border); border-bottom: var(--border); }
+        #source-viewer { background: var(--purple); border-right: var(--border); padding: 3rem 2rem; }
+        #zip-sharing { background: var(--pink); padding: 3rem 2rem; }
+        
+        #api-section { background: var(--white); border-bottom: var(--border); }
+        #faq-section { background: var(--yellow); border-bottom: var(--border); }
+        footer { background: var(--black); color: var(--white); padding: 5rem 2rem; text-align: center; }
+
+        /* Form elements */
+        input, textarea, select {
+            width: 100%;
+            padding: 1.2rem;
+            border: var(--border);
+            font-family: 'Space Mono', monospace;
+            font-size: 1.1rem;
+            margin-bottom: var(--gap-input-input);
+            outline: none;
+            background: var(--white);
+            border-radius: 0;
+        }
+
+        textarea { height: 140px; resize: none; }
+        input:focus { background: #fffde7; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 1.1rem; }
+
+        .upload-area {
+            border: 6px dashed var(--black);
+            padding: 3.5rem 2rem;
+            text-align: center;
+            background: var(--white);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: var(--gap-content-input);
+        }
+
+        .upload-area:hover { background: #fffde7; transform: scale(1.01); }
+        .upload-area h3 { font-size: 3.5rem; margin-bottom: 0.5rem; }
+        .upload-area p { font-size: 1.1rem; font-weight: bold; }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: var(--black);
+            color: var(--white);
+            font-family: 'Bebas Neue', cursive;
+            font-size: 1.2rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        /* Result Card Specifics */
+        .result-url-box {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: var(--gap-input-btn);
+        }
+        .result-url-box input { margin-bottom: 0; flex-grow: 1; font-weight: bold; color: var(--pink); }
+
+        /* History Table */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+        }
+        .history-table th, .history-table td {
+            padding: 1.5rem;
+            border: var(--border);
+            text-align: left;
+        }
+        .history-table th { background: var(--black); color: var(--white); font-family: 'Bebas Neue', cursive; font-size: 1.5rem; }
+
+        /* QR Generator Color Picker */
+        .qr-container {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 2.5rem;
+        }
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: var(--gap-input-input);
+        }
+        .color-input-wrapper {
+            position: relative;
+            width: 56px;
+            height: 48px;
+            border: var(--border);
+            background: var(--white);
+            flex-shrink: 0;
+        }
+        .color-input-wrapper input[type="color"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            border: none;
+            cursor: pointer;
+            background: none;
+        }
+        .hex-input {
+            margin-bottom: 0;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .qr-preview-box {
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+            margin-top: 10px;
+        }
+        #qr-canvas-container { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+
+        /* FAQ Accordion */
+        .faq-item {
+            background: var(--white);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            margin-bottom: 12px;
+        }
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            font-family: 'Bebas Neue', cursive;
+        }
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            display: none;
+            border-top: var(--border);
+            padding-top: 1.5rem;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 40px;
+            background: var(--white);
+            border: var(--border);
+            margin-top: var(--gap-input-btn);
+            display: none;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--pink);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* API Section Compact */
+        .api-card {
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+        .api-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .api-header h4 { font-size: 1.4rem; }
+        .api-code-block {
+            background: #f0f0f0;
+            border: 2px solid var(--black);
+            padding: 12px 16px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.95rem;
+            line-height: 1.3;
+            overflow-x: auto;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        /* Floating Stickers */
+        .sticker-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            header h1 { font-size: 8rem; }
+            .split-section { grid-template-columns: 1fr; }
+            #source-viewer { border-right: none; border-bottom: var(--border); }
+            .qr-container { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .card { padding: var(--card-pad-mobile); }
+            header h1 { font-size: 5rem; letter-spacing: 2px; }
+            .section-title { font-size: 3rem; }
+            .container { padding: 1rem; }
+            .history-table thead { display: none; }
+            .history-table tr { display: block; margin-bottom: 1rem; }
+            .history-table td { display: block; text-align: right; }
+            .history-table td::before { content: attr(data-label); float: left; font-weight: bold; }
+            .qr-container { grid-template-columns: 1fr; }
+            .sticker { transform: scale(0.8) rotate(var(--rot)); }
+            textarea { height: 120px; }
+            .api-code-block { font-size: 0.85rem; padding: 10px 14px; }
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes float { 
+            0% { transform: translateY(0px) rotate(var(--rot)); }
+            50% { transform: translateY(-20px) rotate(calc(var(--rot) + 5deg)); }
+            100% { transform: translateY(0px) rotate(var(--rot)); }
+        }
+        
+        .sticker-live { --rot: -15deg; animation: float 4s ease-in-out infinite; }
+        .sticker-cdn { --rot: 10deg; animation: float 5s ease-in-out infinite; }
+        .sticker-fast { --rot: 5deg; animation: float 3.5s ease-in-out infinite; }
+        .sticker-api { --rot: -8deg; animation: float 6s ease-in-out infinite; }
+        .sticker-beta { --rot: 12deg; animation: float 4.5s ease-in-out infinite; }
+
+        .section-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+        .section-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); background: #fffde7; }
+            100% { transform: scale(1); }
+        }
+        .uploading { animation: pulse 1s infinite; }
+    </style>
+</head>
+<body>
+    <div class="sticker-container">
+        <div class="sticker sticker-live">LIVE</div>
+        <div class="sticker sticker-cdn">CDN</div>
+        <div class="sticker sticker-fast">FAST HOSTING</div>
+        <div class="sticker sticker-api">OPEN API</div>
+        <div class="sticker sticker-beta">BETA</div>
+    </div>
+
+    <header>
+        <div class="container">
+            <h1>SENACLOUD</h1>
+            <p>UPLOAD. HOST. SHARE.</p>
+        </div>
+    </header>
+
+    <main>
+        <!-- 1. Generate Link (Yellow) -->
+        <section id="generate-link">
+            <div class="container">
+                <h2 class="section-title">GENERATE LINK</h2>
+                <div class="card card-rotate-left">
+                    <div class="upload-area" id="drop-zone">
+                        <h3>DROP FILES HERE</h3>
+                        <p>OR CLICK TO BROWSE</p>
+                        <input type="file" id="file-input" multiple style="display: none;">
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 10px;">
+                        <div>
+                            <label>EXPIRATION</label>
+                            <select id="expiration">
+                                <option value="1h">1 HOUR</option>
+                                <option value="24h">24 HOURS</option>
+                                <option value="7d">7 DAYS</option>
+                                <option value="30d">30 DAYS</option>
+                                <option value="never" selected>NEVER</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>&nbsp;</label>
+                            <button class="btn btn-block" id="upload-btn">UPLOAD NOW</button>
+                        </div>
+                    </div>
+
+                    <div class="progress-container" id="progress-container">
+                        <div class="progress-bar" id="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Result (Mint) - Hidden by default -->
+        <section id="result-section">
+            <div class="container">
+                <h2 class="section-title">UPLOAD SUCCESS!</h2>
+                <div class="card card-rotate-right" style="background: var(--white);">
+                    <div id="result-list">
+                        <!-- Result items will be injected here -->
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-purple" onclick="document.getElementById('result-section').style.display='none'">CLOSE RESULT</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. QR Generator (Blue) -->
+        <section id="qr-section">
+            <div class="container">
+                <h2 class="section-title">QR GENERATOR</h2>
+                <div class="card">
+                    <div class="qr-container">
+                        <div class="qr-controls">
+                            <label>QR VALUE (TEXT OR URL)</label>
+                            <textarea id="qr-input" placeholder="Enter text or URL to generate QR code...">https://senacloud.my.id</textarea>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 5px;">
+                                <div>
+                                    <label>QR COLOR</label>
+                                    <div class="color-picker-group">
+                                        <div class="color-input-wrapper">
+                                            <input type="color" id="qr-color" value="#111111">
+                                        </div>
+                                        <input type="text" id="qr-color-hex" class="hex-input" value="#111111" readonly>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label>BG COLOR</label>
+                                    <div class="color-picker-group">
+                                        <div class="color-input-wrapper">
+                                            <input type="color" id="qr-bg-color" value="#ffffff">
+                                        </div>
+                                        <input type="text" id="qr-bg-color-hex" class="hex-input" value="#ffffff" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                                <button class="btn btn-white btn-block" id="qr-clear">CLEAR</button>
+                                <button class="btn btn-pink btn-block" id="qr-download">DOWNLOAD PNG</button>
+                            </div>
+                        </div>
+                        <div class="qr-preview-box">
+                            <div id="qr-canvas-container">
+                                <!-- QR Code will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Recent Uploads -->
+        <section id="history-section">
+            <div class="container">
+                <h2 class="section-title">RECENT UPLOADS</h2>
+                <div class="card card-rotate-left">
+                    <div style="overflow-x: auto; padding: 5px;">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>FILE NAME</th>
+                                    <th>TYPE</th>
+                                    <th>SIZE</th>
+                                    <th>EXPIRATION</th>
+                                    <th>ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-body">
+                                <!-- History items will be injected here -->
+                                <tr>
+                                    <td colspan="5" style="text-align: center; padding: 3rem;">NO UPLOADS YET. START SHARING!</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Source Viewer & ZIP Sharing (Split) -->
+        <div class="split-section">
+            <section id="source-viewer">
+                <div class="container">
+                    <h2 class="section-title">SOURCE VIEWER</h2>
+                    <div class="card card-rotate-right" style="margin-bottom: 0;">
+                        <p style="font-size: 1.1rem; font-weight: bold; margin-bottom: 1.5rem;">VIEW HTML, CSS, JS, JSON, AND TXT WITHOUT EXECUTING. PURE SOURCE CODE ONLY.</p>
+                        <div style="margin-bottom: 1rem;">
+                            <div class="badge">SECURE</div>
+                            <div class="badge">NO RENDER</div>
+                            <div class="badge">FAST</div>
+                        </div>
+                        <div style="margin-top: 1.5rem; background: var(--black); color: var(--mint); padding: 1.5rem; font-family: 'Space Mono', monospace; border: var(--border); overflow-x: auto;">
+                            <span style="color: var(--pink);">const</span> senaCloud = () => {<br>
+                            &nbsp;&nbsp;console.log(<span style="color: var(--yellow);">"Source Viewer Active"</span>);<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="zip-sharing">
+                <div class="container">
+                    <h2 class="section-title">ZIP SHARING</h2>
+                    <div class="card card-rotate-left" style="margin-bottom: 0;">
+                        <p style="font-size: 1.1rem; font-weight: bold; margin-bottom: 1.5rem;">SHARE ZIP FILES WITH A DEDICATED DOWNLOAD PAGE. PERFECT FOR PROJECTS.</p>
+                        <div style="margin-bottom: 1rem;">
+                            <div class="badge">DOWNLOAD PAGE</div>
+                            <div class="badge">FILE INFO</div>
+                            <div class="badge">EXPIRATION</div>
+                        </div>
+                        <div style="margin-top: 1.5rem; text-align: center; border: var(--border); padding: 2rem; background: var(--white);">
+                            <h4 style="font-size: 1.8rem; margin-bottom: 5px;">project-files.zip</h4>
+                            <p style="margin-bottom: 15px;">Size: 15.4 MB</p>
+                            <button class="btn btn-pink">DOWNLOAD NOW</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 6. Developer API (Compact Version) -->
+        <section id="api-section">
+            <div class="container">
+                <h2 class="section-title">DEVELOPER API</h2>
+                
+                <div class="card api-card">
+                    <div class="api-header">
+                        <h4>UPLOAD API</h4>
+                        <button class="btn btn-blue" style="padding: 0.4rem 1rem; font-size: 1rem; margin: 0;" onclick="copyRaw('curl -F \"file=@image.jpg\" https://senacloud.my.id/api/upload')">COPY</button>
+                    </div>
+                    <div class="api-code-block">
+                        curl -F <span style="color: var(--pink);">"file=@image.jpg"</span> https://senacloud.my.id/api/upload
+                    </div>
+                </div>
+
+                <div class="card api-card">
+                    <div class="api-header">
+                        <h4>PASTE API</h4>
+                        <button class="btn btn-blue" style="padding: 0.4rem 1rem; font-size: 1rem; margin: 0;" onclick="copyRaw('curl -X POST -d \"content=hello\" https://senacloud.my.id/api/paste')">COPY</button>
+                    </div>
+                    <div class="api-code-block">
+                        curl -X POST -d <span style="color: var(--pink);">"content=hello"</span> https://senacloud.my.id/api/paste
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. FAQ -->
+        <section id="faq-section">
+            <div class="container">
+                <h2 class="section-title">FAQ</h2>
+                <div id="faq-list">
+                    <div class="faq-item">
+                        <div class="faq-question">WHAT IS SENACLOUD? <span>+</span></div>
+                        <div class="faq-answer">SenaCloud is a playful, developer-focused cloud platform for hosting files, sharing code, and generating QR codes instantly.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">IS IT FREE? <span>+</span></div>
+                        <div class="faq-answer">Yes! SenaCloud is free to use. We believe in open tools for creative developers.</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">HOW LONG DO FILES LAST? <span>+</span></div>
+                        <div class="faq-answer">You can choose expiration from 1 hour up to "Never". You are in control of your data.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <h1 style="font-size: 5rem; color: var(--yellow); letter-spacing: 4px;">SENACLOUD</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; color: var(--white);">MADE BY ARSENA LUCIENDRA</p>
+            <div style="display: flex; justify-content: center; gap: 2rem;">
+                <a href="https://github.com/senaczk" target="_blank" style="color: var(--white); text-decoration: none; font-weight: bold; border-bottom: 2px solid var(--yellow);">GITHUB</a>
+                <a href="https://t.me/senaczk" target="_blank" style="color: var(--white); text-decoration: none; font-weight: bold; border-bottom: 2px solid var(--blue);">TELEGRAM</a>
+            </div>
+            <p style="margin-top: 3rem; opacity: 0.5; color: var(--white);">&copy; 2026 SENACLOUD. NO RIGHTS RESERVED. IT'S YOURS.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <script>
+        // DOM Elements
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const resultSection = document.getElementById('result-section');
+        const resultList = document.getElementById('result-list');
+        const historyBody = document.getElementById('history-body');
+        
+        const qrInput = document.getElementById('qr-input');
+        const qrColor = document.getElementById('qr-color');
+        const qrBgColor = document.getElementById('qr-bg-color');
+        const qrColorHex = document.getElementById('qr-color-hex');
+        const qrBgColorHex = document.getElementById('qr-bg-color-hex');
+        const qrCanvasContainer = document.getElementById('qr-canvas-container');
+        const qrDownload = document.getElementById('qr-download');
+        const qrClear = document.getElementById('qr-clear');
+
+        // --- UPLOAD LOGIC ---
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.background = '#fffde7';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.background = 'var(--white)';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.background = 'var(--white)';
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+        
+        uploadBtn.addEventListener('click', async () => {
+            const files = fileInput.files;
+            if (files.length > 0) {
+                uploadBtn.disabled = true;
+                uploadBtn.innerText = "UPLOADING...";
+                progressContainer.style.display = 'block';
+                
+                const expiration = document.getElementById('expiration').value;
+                
+                for (let i = 0; i < files.length; i++) {
+                    await uploadFile(files[i], expiration);
+                }
+                
+                uploadBtn.disabled = false;
+                uploadBtn.innerText = "UPLOAD NOW";
+                // Reset dropzone text
+                dropZone.querySelector('h3').innerText = 'DROP FILES HERE';
+                fileInput.value = '';
+            } else {
+                alert('PLEASE SELECT FILES FIRST!');
+            }
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                dropZone.querySelector('h3').innerText = `${files.length} FILE(S) SELECTED`;
+            }
+        }
+
+        async function uploadFile(file, expiration) {
+            updateProgress(10);
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("expiresIn", expiration);
+
+            updateProgress(40);
+            try {
+                const response = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData
+                });
+                
+                updateProgress(80);
+                const data = await response.json();
+
+                if (data.success) {
+                    updateProgress(100);
+                    finishUpload(data, expiration);
+                    addToHistory({
+                        name: data.filename,
+                        type: file.type || 'file',
+                        size: formatBytes(file.size),
+                        url: data.url,
+                        download: data.download,
+                        expiration: expiration,
+                        date: new Date().toLocaleString()
+                    });
+                } else {
+                    updateProgress(0);
+                    alert("UPLOAD FAILED: " + (data.message || "Unknown error"));
+                }
+            } catch (error) {
+                updateProgress(0);
+                alert("UPLOAD FAILED. CHECK SERVER.");
+            }
+        }
+
+        function updateProgress(percent) {
+            progressBar.style.width = percent + '%';
+            if (percent === 100) {
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    progressBar.style.width = '0%';
+                }, 1000);
+            }
+        }
+
+        function finishUpload(data, expiration) {
+            resultSection.style.display = 'block';
+            
+            const fullUrl = window.location.origin + data.url;
+            const id = Math.random().toString(36).substring(7);
+            
+            const itemEl = document.createElement('div');
+            itemEl.className = 'card';
+            itemEl.style.marginBottom = '1.5rem';
+            itemEl.innerHTML = `
+                <h4 style="font-size: 1.5rem; margin-bottom: 15px;">${data.filename}</h4>
+                <div class="result-url-box">
+                    <input type="text" value="${fullUrl}" readonly id="url-${id}">
+                    <button class="btn btn-yellow" onclick="copyToClipboard('url-${id}')">COPY</button>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-blue" onclick="window.open('${data.url}')">OPEN</button>
+                    <button class="btn btn-pink" onclick="window.open('${data.download || data.url}')">DOWNLOAD</button>
+                </div>
+            `;
+            resultList.prepend(itemEl);
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto fill QR
+            qrInput.value = fullUrl;
+            generateQR();
+        }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+
+        function copyToClipboard(id) {
+            const copyText = document.getElementById(id);
+            copyText.select();
+            document.execCommand("copy");
+            alert("COPIED TO CLIPBOARD!");
+        }
+
+        function copyRaw(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert("API COMMAND COPIED!");
+        }
+
+        // --- HISTORY LOGIC ---
+        function addToHistory(item) {
+            let history = JSON.parse(localStorage.getItem('senacloud_history') || '[]');
+            history.unshift(item);
+            if (history.length > 10) history.pop();
+            localStorage.setItem('senacloud_history', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            let history = JSON.parse(localStorage.getItem('senacloud_history') || '[]');
+            if (history.length === 0) return;
+
+            historyBody.innerHTML = '';
+            history.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const fullUrl = window.location.origin + item.url;
+                tr.innerHTML = `
+                    <td data-label="FILE NAME">${item.name}</td>
+                    <td data-label="TYPE"><span class="badge">${item.type.split('/')[1] || item.type}</span></td>
+                    <td data-label="SIZE">${item.size}</td>
+                    <td data-label="EXPIRATION">${item.expiration.toUpperCase()}</td>
+                    <td data-label="ACTIONS">
+                        <button class="btn btn-yellow" style="padding: 0.5rem 1rem; font-size: 1rem;" onclick="window.open('${item.url}')">OPEN</button>
+                        <button class="btn btn-blue" style="padding: 0.5rem 1rem; font-size: 1rem;" onclick="generateQRFromHistory('${fullUrl}')">QR</button>
+                    </td>
+                `;
+                historyBody.appendChild(tr);
+            });
+        }
+
+        // --- QR LOGIC ---
+        function generateQR() {
+            const val = qrInput.value;
+            if (!val) {
+                qrCanvasContainer.innerHTML = '<div style="width: 200px; height: 200px; background: #eee; display: flex; align-items: center; justify-content: center; border: 2px dashed #ccc;">QR PREVIEW</div>';
+                return;
+            }
+
+            qrCanvasContainer.innerHTML = '<canvas id="qr-canvas"></canvas>';
+            QRCode.toCanvas(document.getElementById('qr-canvas'), val, {
+                width: 250,
+                margin: 2,
+                color: {
+                    dark: qrColor.value,
+                    light: qrBgColor.value
+                }
+            }, function (error) {
+                if (error) console.error(error);
+            });
+        }
+
+        function generateQRFromHistory(url) {
+            qrInput.value = url;
+            generateQR();
+            document.getElementById('qr-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        qrInput.addEventListener('input', generateQR);
+        
+        qrColor.addEventListener('input', (e) => {
+            qrColorHex.value = e.target.value.toUpperCase();
+            generateQR();
+        });
+        
+        qrBgColor.addEventListener('input', (e) => {
+            qrBgColorHex.value = e.target.value.toUpperCase();
+            generateQR();
+        });
+        
+        qrClear.addEventListener('click', () => {
+            qrInput.value = '';
+            generateQR();
+        });
+
+        qrDownload.addEventListener('click', () => {
+            const canvas = document.getElementById('qr-canvas');
+            if (canvas) {
+                const link = document.createElement('a');
+                link.download = 'senacloud-qr.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            } else {
+                alert('GENERATE A QR FIRST!');
+            }
+        });
+
+        // --- FAQ ACCORDION ---
+        document.querySelectorAll('.faq-question').forEach(q => {
+            q.addEventListener('click', () => {
+                const answer = q.nextElementSibling;
+                const isVisible = answer.style.display === 'block';
+                
+                // Close all others
+                document.querySelectorAll('.faq-answer').forEach(a => a.style.display = 'none');
+                document.querySelectorAll('.faq-question span').forEach(s => s.innerText = '+');
+                
+                if (!isVisible) {
+                    answer.style.display = 'block';
+                    q.querySelector('span').innerText = '-';
+                }
+            });
+        });
+
+        // Scroll Reveal Logic
+        const observerOptions = { threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            section.classList.add('section-reveal');
+            observer.observe(section);
+        });
+
+        // Initialize
+        window.onload = () => {
+            renderHistory();
+            generateQR();
+            
+            document.querySelectorAll('.sticker').forEach((s, i) => {
+                s.style.animationDelay = `${i * 0.2}s`;
+            });
+        };
+    </script>
+</body>
+</html>
