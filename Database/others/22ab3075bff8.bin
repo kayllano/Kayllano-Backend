@@ -1,0 +1,401 @@
+import moment from 'moment-timezone'
+import * as levelling from '../lib/levelling.js'
+import fs from 'fs'
+import { createHash } from 'crypto';
+import sPR from '../lib/sPR.js';
+
+function getMenuStructure(prefix) {
+	const hash = createHash('md5')
+		.update(JSON.stringify(
+			Object.values(global.plugins).map(p => ({
+				help: p.help,
+				tags: p.tags,
+				limit: p.limit,
+				premium: p.premium,
+				owner: p.owner,
+				disabled: p.disabled,
+			}))
+		))
+		.digest('hex')
+
+	const cacheKey = `menu.structure.${hash}`
+
+	const cached = _.cache.get(cacheKey)
+	
+	if (cached) return cached
+
+	const tagIndex = Object.create(null)
+
+	for (const plugin of Object.values(global.plugins)) {
+		if (plugin.disabled) continue
+
+		const helps = Array.isArray(plugin.help)
+			? plugin.help
+			: plugin.help
+				? [plugin.help]
+				: []
+
+		if (!helps.length) continue
+
+		const tags = Array.isArray(plugin.tags)
+			? plugin.tags
+			: plugin.tags
+				? [plugin.tags]
+				: []
+
+		const isCustomPrefix = 'customPrefix' in plugin
+
+		const flags = [
+			plugin.limit ? '🄻' : '',
+			plugin.premium ? '🄿' : '',
+			plugin.owner ? '🄾' : '',
+		]
+			.filter(Boolean)
+			.join(' ')
+
+		for (const tag of tags) {
+			if (!tagIndex[tag]) tagIndex[tag] = []
+
+			for (const help of helps) {
+				tagIndex[tag].push(
+					`│ ◦ ${
+						isCustomPrefix
+							? help
+							: prefix + help
+					} ${flags}`.trimEnd()
+				)
+			}
+		}
+	}
+
+	_.cache.set(
+		cacheKey,
+		tagIndex,
+		3600 // 1 jam
+	)
+
+	return tagIndex
+}
+
+function getMenuThumbnail() {
+	const cached = _.cache.get('menu.thumbnail')
+
+	if (cached)
+		return cached
+
+	const promise = (async () => {
+		const buffer = fs.readFileSync('./media/menu.jpg')
+		const resized = await Toolkit.resize(buffer, 300, 300)
+		return Buffer.from(resized)
+	})()
+
+	_.cache.set('menu.thumbnail', promise, 600)
+
+	return promise
+}
+
+function getMenuSelectJson(prefix, command, allTags) {
+	const cached = _.cache.get('menu.select')
+	
+	if(cached) 
+		return cached
+
+	const rows = []
+
+	for (const tag in allTags) {
+		rows.push({
+			title: '➳ ' + allTags[tag],
+			description: `Untuk Menampilkan ${tag}`,
+			id: `${prefix}${command} ${tag}`,
+		})
+	}
+
+	const menuSelectJson = JSON.stringify({
+		title: namebot + '!',
+		sections: [
+			{
+				title: `⚡ Akses Cepat`, 
+				rows: [
+					{
+						title: '👑 ' + allTags['owner'], 
+						description: 'Menampilkan semua menu owner', 
+						id: `${prefix}${command} owner`
+					}, 
+					{
+						title: 'ℹ️ ' + allTags['info'], 
+						description: 'Menampilkan semua menu info', 
+						id: `${prefix}${command} info`
+					}
+				]
+			}, 
+			{
+				title: `📂 Berdasarkan Kategori`,
+				rows,
+			},
+		],
+	})
+	
+	_.cache.set('menu.select', menuSelectJson) 
+
+	return menuSelectJson
+}
+
+const styleMap = (() => {
+	const src = 'abcdefghijklmnopqrstuvwxyz1234567890'
+	const dst = 'ᴀʙᴄᴅᴇꜰɢʜɪᴊᴋʟᴍɴᴏᴘqʀꜱᴛᴜᴠᴡxʏᴢ1234567890'
+
+	const map = Object.create(null)
+
+	for (let i = 0; i < src.length; i++) {
+		map[src[i]] = dst[i]
+	}
+
+	return map
+})()
+
+function style(text) {
+	let result = ''
+
+	for (let i = 0; i < text.length; i++) {
+		const c = text[i].toLowerCase()
+		result += styleMap[c] || text[i]
+	}
+
+	return result
+}
+
+const handler = async (m, { conn, usedPrefix: _p, command, isOwner, args }) => {
+	const allTags = {
+		main: 'Main Menu',
+		ai: 'Ai Menu',
+		downloader: 'Downloader Menu',
+		database: 'Database Menu',
+		sticker: 'Sticker Menu',
+		tools: 'Tools Menu',
+		search: 'Search Menu',
+		rpg: 'Rpg Menu',
+		fun: 'Fun Menu',
+		group: 'Group Menu',
+		xp: 'XP & Level Menu',
+		info: 'Info Menu',
+		owner: 'Owner Menu',
+	}
+
+	let teks = (args[0] || '').toLowerCase()
+
+	if (
+		!Object.prototype.hasOwnProperty.call(allTags, teks) &&
+		!Object.values(allTags).some(v => v.toLowerCase().includes(teks))
+	) {
+		teks = 'all'
+	}
+
+	let tags
+
+	if (teks === 'all') {
+		tags = { ...allTags }
+	} else {
+		tags = Object.create(null)
+
+		for (const [k, v] of Object.entries(allTags)) {
+			if (k === teks || v.toLowerCase().includes(teks)) {
+				tags[k] = v
+			}
+		}
+	}
+
+	if (!isOwner) delete tags.owner
+	if (!m.isGroup) delete tags.group
+
+	const defaultMenu = {
+		before: `
+┌ ◦ *[ %me ]*
+├ *${ucapan()} %name*
+│
+│ ◦ Limit : *%limit*
+│ ◦ Role : *%role*
+│ ◦ Level : *%level (%exp / %maxexp)* [%xp4levelup]
+│ ◦ %totalexp XP secara Total
+│
+│ ◦ Tanggal: *%week, %date*
+│ ◦ Uptime: *%uptime*
+│ ◦ Database: %rtotalreg dari %totalreg
+│
+│ ◦ Note :
+│ ◦ *🄿* = Premium
+│ ◦ *🄻* = Limit
+└────
+%readmore`.trim(),
+		header: '┌ ◦ *[ %category ]*',
+		body: '│ ◦ %cmd %flags',
+		footer: '└—',
+		after: '',
+	}
+
+	try {
+		const tagIndex = getMenuStructure(_p)
+
+		const sections = [defaultMenu.before]
+
+		for (const tag in tags) {
+			sections.push(
+				`${defaultMenu.header.replace(
+					/%category/g,
+					tags[tag]
+				)}\n${(tagIndex[tag] || []).join('\n')}\n${defaultMenu.footer}`
+			)
+		}
+
+		sections.push(defaultMenu.after)
+
+		const text = sections.join('\n')
+
+		const user = global.db.data.users[m.sender]
+
+		const {
+			exp,
+			limit,
+			money,
+			level,
+			role,
+			registered,
+		} = user
+
+		const { min, xp, max } = levelling.xpRange(
+			level,
+			global.multiplier
+		)
+
+		const name = registered
+			? user.name
+			: conn.getName(m.sender)
+
+		const users = global.db.data.users
+
+		let rtotalreg = 0
+
+		for (const id in users) {
+			if (users[id].registered) rtotalreg++
+		}
+
+		const totalreg = Object.keys(users).length
+
+		const d = new Date()
+
+		const week = d.toLocaleDateString('id-ID', {
+			weekday: 'long',
+		})
+
+		const date = d.toLocaleDateString('id-ID', {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+		})
+
+		const replace = {
+			'%': '',
+			p: _p,
+			uptime: clockString(process.uptime() * 1000),
+			me: conn.user.name,
+			exp: exp - min,
+			maxexp: xp,
+			totalexp: exp,
+			xp4levelup:
+				max - exp <= 0
+					? `Siap untuk *${_p}levelup*`
+					: `${max - exp} XP lagi untuk levelup`,
+			level,
+			limit,
+			name,
+			money,
+			week,
+			date,
+			totalreg,
+			rtotalreg,
+			role,
+			readmore: readMore,
+		}
+
+		const finalText = style(
+			text.replace(
+				/%(xp4levelup|maxexp|totalexp|totalreg|rtotalreg|uptime|level|limit|money|week|date|role|name|exp|me|readmore|p|%)/g,
+				(match, key) => String(replace[key])
+			)
+		)
+
+		const thumbnail = await getMenuThumbnail()
+
+		const msg = await new ButtonV2(conn)
+			.setRawThumbnail(thumbnail)
+			.setTitle(global.namebot)
+			.setSubtitle(`Welcome, ${m.pushName}`)
+			.setBody(finalText)
+			.setFooter(global.namebot)
+			.addRawButton({
+				buttonText: {
+					displayText: '☰ List Menu',
+				},
+				buttonId: 'menu',
+				type: 1,
+				nativeFlowInfo: {
+					name: 'single_select',
+					paramsJson: getMenuSelectJson(
+						_p,
+						command,
+						allTags
+					),
+				},
+			})
+			.addButton('〔 PING 〕', `${_p}ping`)
+			.build(m.chat, {
+				quoted: m,
+			})
+		await sPR(
+			conn, 
+			m.chat, 
+			msg.message, 
+			{
+				includeMe: true, 
+				mode: 'include', 
+				include: [m.sender]
+			}
+		) 
+	} catch (e) {
+		console.error(e)
+		m.reply('Terjadi kesalahan saat menampilkan menu.\n\n' + String(e))
+	}
+}
+
+handler.help = ['menu']
+handler.command = /^(menu|help|\?)$/i
+handler.exp = 3
+
+export default handler
+
+const more = String.fromCharCode(8206)
+const readMore = more.repeat(4001)
+
+function clockString(ms) {
+	const h = Math.floor(ms / 3600000)
+	const m = Math.floor(ms / 60000) % 60
+	const s = Math.floor(ms / 1000) % 60
+
+	return [h, m, s]
+		.map(v => String(v).padStart(2, '0'))
+		.join(':')
+}
+
+function ucapan() {
+	const hour = Number(
+		moment
+			.tz('Asia/Jakarta')
+			.format('HH')
+	)
+
+	if (hour >= 18) return 'Selamat malam'
+	if (hour >= 15) return 'Selamat sore'
+	if (hour > 10) return 'Selamat siang'
+	if (hour >= 4) return 'Selamat pagi'
+
+	return 'Selamat dinihari'
+}
